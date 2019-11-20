@@ -4,3 +4,8 @@
 
 ### by Didier Re'my
 
+
+
+#### Index
+ - [Introduction](introduction.md)
+ - [Core ML](core-ml.md)
