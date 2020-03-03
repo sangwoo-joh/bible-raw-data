@@ -36,3 +36,11 @@
  * 요청 -> 웹 서버 -> WSGI Server (middleware) -> WSGI를 지원하는 웹
    어플리케이션 (Django, flask, ...)
  * middleware: mod_wsgi, uwsgi, gunicorn, twisted.web, tornado, ...
+
+### Gateway
+ 네트워크에서 서로 다른 통신망, 프로토콜을 사용하는 네트워크 간의
+ 통신을 가능하게 하는 소프트웨어를 두루 일컫는 용어.
+
+ 즉, 다른 네트워크로 들어가는 **입구 역할**을 하는 네트워크 포인트.
+
+ 해외여행을 나가기 위해 꼭 들러야 하는 공항과 같은 개념.
