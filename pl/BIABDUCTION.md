@@ -69,7 +69,7 @@ A * ?antiframe ㅏ B * ?frame
 ```
 
  + antiframe: "pointer z is owned"
- + frame: "point z is owned"
+ + frame: "point x is owned"
 
 
  Abduction was advanced by the philosopher Charles Peirce in his work
