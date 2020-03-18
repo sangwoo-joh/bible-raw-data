@@ -1,5 +1,6 @@
 open Base_note
 
+(*********************** Name related ***************************)
 module Ident = struct
   (** Module for Names and Identifiers *)
   module Name = struct
@@ -67,16 +68,13 @@ module Annot = struct
   end
 end
 
+(************************************* Type related *****************************)
 module Typ = struct
   (** The Smallfoot Intermediate Language: Types *)
 
   module IntegerWidths = struct
     type t =
-      { char_width: int
-      ; short_width: int
-      ; int_width: int
-      ; long_width: int
-      ; longlong_width: int }
+      {char_width: int; short_width: int; int_width: int; long_width: int; longlong_width: int}
   end
 
   (** Kinds of integers *)
@@ -132,12 +130,7 @@ module Typ = struct
       | ObjcClass of QualifiedCppName.t
       | ObjcProtocol of QualifiedCppName.t
 
-    and template_arg =
-      | TType of t
-      | TInt of Int64.t
-      | TNull
-      | TNullPtr
-      | TOpaque
+    and template_arg = TType of t | TInt of Int64.t | TNull | TNullPtr | TOpaque
 
     and template_spec_info =
       | NoTemplate
@@ -203,9 +196,7 @@ module Typ = struct
          name of the struct, [None] means the parameter is of some
          other type. *)
 
-      type t =
-        | JavaParameter of Java.java_type
-        | ClangParameter of clang_parameter
+      type t = JavaParameter of Java.java_type | ClangParameter of clang_parameter
     end
 
     module ObjC_Cpp = struct
@@ -251,12 +242,24 @@ module Typ = struct
       | Block of Block.t
       | ObjC_Cpp of ObjC_Cpp.t
       | WithBlockParameters of t * Block.block_name list
+
+    let equal = failwith "dummy"
+
+    let hash = Hashtbl.hash
+
+    module Hashable = struct
+      type nonrec t = t
+
+      let equal = equal
+
+      let hash = hash
+    end
+
+    module Hash = Hashtbl.Make (Hashable)
   end
 
   module Fieldname = struct
-    type t =
-      | Clang of {class_name: Name.t; field_name: string}
-      | Java of string
+    type t = Clang of {class_name: Name.t; field_name: string} | Java of string
   end
 
   module Struct = struct
@@ -277,6 +280,17 @@ module Typ = struct
   end
 end
 
+module Subtype = struct
+  type t' = Exact  (** denotes the current type only *) | Subtypes of Typ.Name.t list
+
+  (** Denotes the current type and a list of types that are not their subtypes *)
+  type kind = CAST | INSTOF | NORMAL
+
+  type t = t' * kind
+
+  type result = No | Unknown | Yes
+end
+
 module Pvar = struct
   (** The Smallfoot Intermediate Language *)
 
@@ -284,8 +298,7 @@ module Pvar = struct
 
   (** Kind of global variables *)
   type pvar_kind =
-    | Local_var of Typ.Procname.t
-        (** local variable belonging to a function *)
+    | Local_var of Typ.Procname.t  (** local variable belonging to a function *)
     | Callee_var of Typ.Procname.t  (** local variable belonging to a callee *)
     | Abduced_retvar of Typ.Procname.t * Location.t
         (** synthetic variable to represent return value *)
@@ -298,8 +311,7 @@ module Pvar = struct
         ; is_pod: bool
         ; is_static_local: bool
         ; is_static_global: bool }
-    | Seed_var
-        (** variable used to store the initial value of formal parameters *)
+    | Seed_var  (** variable used to store the initial value of formal parameters *)
 
   type t = {pv_hash: int; pv_name: Mangled.t; pv_kind: pvar_kind}
   (** Names for program variables *)
@@ -320,9 +332,7 @@ module AccessPath = struct
        names should already be enough to distinguish the bases. *)
     type base = Var.t * typ_
 
-    type access =
-      | ArrayAccess of typ_ * t list
-      | FieldAccess of Typ.Fieldname.t
+    type access = ArrayAccess of typ_ * t list | FieldAccess of Typ.Fieldname.t
 
     and t = base * access list
   end
@@ -334,4 +344,626 @@ module AccessPath = struct
   end
 
   include Raw
+end
+
+(********************************** Actual IR related *****************************)
+
+module Unop = struct
+  type t = Neg | BNot  (** Bitwise complement ~ *) | LNot  (** Logical Not ! *)
+end
+
+module Binop = struct
+  type ikind_option_for_binop = Typ.ikind option
+
+  type t =
+    | PlusA of ikind_option_for_binop  (** arithmetic + *)
+    | PlusPI  (** pointer + integer *)
+    | MinusA of ikind_option_for_binop  (** arithmetic - *)
+    | MinusPI  (** pointer - integer *)
+    | MinusPP  (** pointer - pointer *)
+    | Div
+    | Mod
+    | Shiftlt
+    | Shiftrt
+    | Lt
+    | Gt
+    | Le
+    | Ge
+    | Eq
+    | Ne
+    | BAnd
+    | BXor
+    | BOr
+    | LAnd
+    | LOr
+end
+
+module Const = struct
+  type t =
+    | Cint of IntLit.t
+    | Cfun of Typ.Procname.t  (** function names *)
+    | Cstr of string
+    | Cfloat of float
+    | Cclass of Ident.name
+end
+
+module Exp = struct
+  (* reverse the natural order on Var *)
+  type ident_ = Ident.t
+
+  type closure = {name: Typ.Procname.t; captured_vars: (t * Pvar.t * Typ.t) list}
+
+  and sizeof_data = {typ: Typ.t; nbytes: int option; dynamic_length: t option; subtype: Subtype.t}
+  (** This records information about a [sizeof(typ)] expression. *)
+
+  (** Program expressions *)
+  and t =
+    | Var of ident_  (** Pure variable: it is not an lvalue *)
+    | UnOp of Unop.t * t * Typ.t option  (** Unary operator with type of the result if known *)
+    | BinOp of Binop.t * t * t
+    | Exn of t  (** Exception *)
+    | Closure of closure  (** Anonymous function *)
+    | Const of Const.t
+    | Cast of Typ.t
+    | Lvar of Pvar.t  (** The address of a program variable *)
+    | Lfield of t * Typ.Fieldname.t * Typ.t
+        (** A field offset, the type is the surrounding struct type *)
+    | Lindex of t * t  (** An array index offset: [exp1[exp2]] *)
+    | Sizeof of sizeof_data
+end
+
+module CallFlags = struct
+  (** Flags for a procedure call *)
+
+  type t =
+    { cf_assign_last_arg: bool
+    ; cf_injected_destructor: bool
+    ; cf_interface: bool
+    ; cf_is_objc_block: bool
+    ; cf_noreturn: bool
+    ; cf_virtual: bool
+    ; cf_with_block_parameters: bool }
+end
+
+module DecompiledExp = struct
+  (** expression representing the result of decompilation *)
+  type t =
+    | Darray of t * t
+    | Dbinop of Binop.t * t * t
+    | Dconst of Const.t
+    | Dsizeof of Typ.t * t option * Subtype.t
+    | Dderef of t
+    | Dfcall of t * t list * Location.t * CallFlags.t
+    | Darrow of t * Typ.Fieldname.t
+    | Ddot of t * Typ.Fieldname.t
+    | Dpvar of Pvar.t
+    | Dpvaraddr of Pvar.t
+    | Dunop of Unop.t * t
+    | Dunknown
+    | Dretcall of t * t list * Location.t * CallFlags.t
+
+  type vpath = t option
+  (** Value paths: identify an occurrence of a value in a symbolic
+     heap each expression represents a path, with Dpvar being the
+     simplest one *)
+end
+
+module PredSymb = struct
+  (** what is this?? *)
+  type func_attribute = FA_sentinel of int * int
+
+  type access = Default | Public | Private | Protected
+
+  type mem_kind = Mmalloc | Mnew | Mnew_array | Mobjc
+
+  type resource = Rmemory of mem_kind | Rfile | Rignore | Rlock
+
+  type res_act_kind = Racquire | Rrelease
+
+  type dangling_kind =
+    | DAuninit  (** pointer is dangling because it is uninitialized *)
+    | DAaddr_stack_var
+        (** because it is the address of a stack variable which went out of scope *)
+    | DAminusone
+
+  (* pointer is -1 *)
+
+  type path_pos = Typ.Procname.t * int
+  (** position in a path: proc name, node id *)
+
+  type res_action =
+    { ra_kind: res_act_kind
+    ; ra_res: resource
+    ; ra_pname: Typ.Procname.t  (** name of the procedure used to acquire/release the resource *)
+    ; ra_loc: Location.t
+    ; ra_vpath: DecompiledExp.vpath }
+  (** acquire / release action on a resource *)
+
+  (** type aliases for components of t values that compare should ignore *)
+
+  type annot_item_ = Annot.Item.t
+
+  type location_ = Location.t
+
+  type path_pos_ = path_pos
+
+  (** Attributes are n-ary function symbols that are applied to
+     expression arguments in Apred and Anpred atomic formulas.  Many
+     operations don't make much sense for nullary predicates, and are
+     generally treated as no-ops. The first argument is treaded
+     specially, as the "anchor" of the predicate application. e.g.,
+     adding or removing an attribute uses the anchor to identify the
+     atom to operate on. Also, abstraction and normalization
+     operations treat the anchor specially and maintain more
+     information on it than other arguments. Therefore, when attaching
+     an attribute to an expression, that expression should be the
+     first argument, optionally followed by additional related
+     expressions. *)
+  type t =
+    | Aresource of res_action
+    | Aautorelease
+    | Adangling of dangling_kind
+    | Aundef of Typ.Procname.t * annot_item_ * location_ * path_pos_
+    | Alocked
+    | Aunlocked
+    | Adiv0 of path_pos
+    | Aobjc_null
+    | Aretval of Typ.Procname.t * Annot.Item.t
+    | Aobserver  (** denots an object registered as an observer to a notification center *)
+    | Aunsubscribed_observer
+    | Awont_leak  (** value do not participate in memory leak analysis *)
+
+  type category =
+    | ACresource
+    | ACautorelease
+    | AClock
+    | ACdiv0
+    | ACobjc_null
+    | ACundef
+    | ACretval
+    | ACobserver
+    | ACwontleak
+end
+
+module Sil = struct
+  (** The Smallfoot Intermediate Language *)
+
+  (** Kind of prune instruction *)
+  type if_kind =
+    | Ik_bexp  (** boolean expressions, and exp ? exp : exp *)
+    | Ik_dowhile
+    | Ik_for
+    | Ik_if
+    | Ik_land_lor
+    | Ik_while
+    | Ik_switch
+
+  type instr_metadata =
+    | Abstract of Location.t
+        (** a good place to apply abstraction, mostly used in the biabduction analysis *)
+    | ExitScope of Var.t list * Location.t  (** remove temporaries and dead program variables *)
+    | Nullify of Pvar.t * Location.t  (** nullify stack variable *)
+    | Skip
+    | VariableLifetimeBegins of Pvar.t * Typ.t * Location.t  (** stack variable declared *)
+
+  (** An instruction *)
+  type instr =
+    (* [x] must be used in a subsequent instruction, otherwise the
+       entire `Load` instruction may be eliminated by copy-propagation
+    *)
+    | Load of Ident.t * Exp.t * Typ.t * Location.t
+        (** Load a value from the heap into an identifier.
+        [x = *lexp:typ] where
+        - [lexp] is an expression denoting a heap address
+        - [typ] is the root type of [lexp] *)
+    | Store of Exp.t * Typ.t * Exp.t * Location.t
+        (** Store the value of an expression into the heap.
+        [*lexp1:typ = exp2] where
+        - [lexp1] is an expression denoting a heap address
+        - [typ] is the root type of [lexp1]
+        - [exp2] is the expression whose value is stored *)
+    | Prune of Exp.t * Location.t * bool * if_kind
+        (** Prune the state based on [exp=1], the boolean indicates whether true branch *)
+    | Call of (Ident.t * Typ.t) * Exp.t * (Exp.t * Typ.t) list * Location.t * CallFlags.t
+        (** [Call ((ret_id, ret_typ), e_fun, arg_ts, loc, call_flags))] represents an instruction
+        [ret_id = e_fun(arg_ts);] *)
+    | Metadata of instr_metadata
+        (** Hints about the program that are not strictly needed to
+        understand its semantics, for instance information about its
+        original syntactic structure *)
+
+  (** offset for an lvalue *)
+  type offset = Off_fld of Typ.Fieldname.t * Typ.t | Off_index of Exp.t
+
+  (** An atom is a pure atomic formula *)
+  type atom =
+    | Aeq of Exp.t * Exp.t
+    | Aneq of Exp.t * Exp.t
+    | Apred of PredSymb.t * Exp.t list  (** predicate symbol applied to exps *)
+    | Anpred of PredSymb.t * Exp.t list  (** negated predicate symbol applied to exps *)
+
+  (** Kind of lseg or dllseg predicates ??*)
+  type lseg_kind =
+    | Lseg_NE  (** nonempty (possibly circular) listseg *)
+    | Lseg_PE  (** possibly empty (possibly circular) listseg *)
+
+  type zero_flag = bool option
+  (** The boolean is true when the pointer was dereferenced without testing for zero *)
+
+  type null_case_flag = bool
+  (** True when the value was obtained by doing case analysis on null in a procedure call *)
+
+  (** instrumentation of heap values *)
+  type inst =
+    | Iabstraction
+    | Iactual_precondition
+    | Ialloc
+    | Iformal of zero_flag * null_case_flag
+    | Iinitial
+    | Ilookup
+    | Inone
+    | Inullify
+    | Irearrange of zero_flag * null_case_flag * int * PredSymb.path_pos
+    | Itaint
+    | Iupdate of zero_flag * null_case_flag * int * PredSymb.path_pos
+    | Ireturn_from_call of int
+
+  (** structured expressions represent a value of structured type, such as an array or a struct *)
+  type 'inst strexp0 =
+    | Eexp of Exp.t * 'inst  (** Base case: expression with instrumentation *)
+    | Estruct of (Typ.Fieldname.t * 'inst strexp0) list * 'inst  (** C structure *)
+    | Earray of Exp.t * (Exp.t * 'inst strexp0) list * 'inst
+        (** Array of given length.
+        There are two conditions imposed / used in the array case.
+        First, if some index and value pair appears inside an array in a strexp,
+        then the index is less than the length of the array.
+        e.g. x |-> [10 | e1: v1] implies e1 <= 9
+        Second, if two indices appear in an array, they should be different.
+        e.g. x |-> [10 | e1: v1, e2: v2] implies e1 != e2 *)
+
+  type strexp = inst strexp0
+
+  (** an atomic heap predicate *)
+  type 'inst hpred0 =
+    | Hpointsto of Exp.t * 'inst strexp0 * Exp.t
+        (** represents [exp |-> strexp: typexp] where
+        - [typexp] is an expression representing a type, e.g., [sizeof(t)] *)
+    | Hlseg of lseg_kind * 'inst hpara0 * Exp.t * Exp.t * Exp.t list
+        (** higher-order predicate for singly-linked lists.
+        Should ensure that exp1 != exp2 implies that exp1 is allocated.
+        This assumption is used in the rearrangement.
+        The last [exp list] parameter is used to denote the shared links by all the nodes in the list. *)
+    | Hdllseg of lseg_kind * 'inst hpara_dll0 * Exp.t * Exp.t * Exp.t * Exp.t * Exp.t list
+        (** higher-order predicate for doubly-linked lists.
+        Parameter for the higher-order singly-linked list predicate.
+        Means "lambda (root,next,svars). Exists evars. body".
+        Assume that root, next, svars, evars are disjoint sets of
+        primed identifiers, and include all the free primed identifiers in body.
+        body should not contain any non - primed identifiers or program variables (i.e. pvars). *)
+
+  and 'inst hpara0 =
+    { root: Ident.t
+    ; next: Ident.t
+    ; svars: Ident.t list
+    ; evars: Ident.t list
+    ; body: 'inst hpred0 list }
+
+  and 'inst hpara_dll0 =
+    { cell: Ident.t  (** address cell *)
+    ; blink: Ident.t  (** backward *)
+    ; flink: Ident.t  (** forward *)
+    ; svars_dll: Ident.t list
+    ; evars_dll: Ident.t list
+    ; body_dll: 'inst hpred0 list }
+  (** parameter for the higher-order doubly-linked list predicates.
+      Assume that all the free identifiers in body_dll should belong to
+      cell, blink, flink, svars_dll, evars_dll. *)
+
+  type hpred = inst hpred0
+
+  type hpara = inst hpara0
+
+  type hpara_dll = inst hpara_dll0
+
+  type ident_dexp = Ident.t * Exp.t
+
+  type subst = ident_dexp list
+
+  type subst_fun = Ident.t -> Exp.t
+end
+
+module CallSite = struct
+  type t = {pname: Typ.Procname.t; loc: Location.t}
+end
+
+(************************************* CFG related ****************************)
+module Instrs = struct
+  (* Some functions are only used on non-reversed arrays, let's specialize them.
+  The argument of the type helps us make sure they can't be used otherwise. *)
+  module RevArray : sig
+    type 'a t
+
+    val is_empty : 'a t -> bool
+
+    val length : 'a t -> int
+
+    val of_rev_array : 'a Base.Array.t -> 'a t
+
+    val get : 'a t -> int -> 'a
+
+    val last_opt : 'a t -> 'a option
+
+    val fold : ('a t, 'a, 'accum) Base.Container.fold
+  end = struct
+    type 'a t = 'a Base.Array.t
+
+    let is_empty = Base.Array.is_empty
+
+    let length = Base.Array.length
+
+    let of_rev_array a = a
+
+    let get a index = a.(Base.Array.length a - 1 - index)
+
+    let last_opt a = if is_empty a then None else Some (Base.Array.unsafe_get a 0)
+
+    let fold a ~init ~f =
+      let f = Base.Fn.flip f in
+      Base.Array.fold_right a ~init ~f
+  end
+
+  type reversed
+
+  type not_reversed
+
+  type 'rev t =
+    | NotReversed : Sil.instr Base.Array.t -> not_reversed t
+    | Reversed : Sil.instr RevArray.t -> reversed t
+
+  type not_reversed_t = not_reversed t
+end
+
+module ClangMethodKind = struct
+  type t = CPP_INSTANCE | OBJC_INSTANCE | CPP_CLASS | OBJC_CLASS | BLOCK | C_FUNCTION
+end
+
+module ProcAttributes = struct
+  type objc_accessor_type = Objc_getter of Typ.Struct.field | Objc_setter of Typ.Struct.field
+
+  type var_data = {name: Mangled.t; typ: Typ.t; modify_in_block: bool; is_constexpr: bool}
+
+  type t =
+    { access: PredSymb.access  (** visibility access *)
+    ; captured: (Mangled.t * Typ.t) list  (** name and type of variables captured in blocks *)
+    ; exceptions: string list  (** exceptions thrown by the procedure *)
+    ; formals: (Mangled.t * Typ.t) list  (** name and type of formal parameters *)
+    ; const_formals: int list  (** list of indices of formals that are const-qualified *)
+    ; func_attributes: PredSymb.func_attribute list
+    ; is_abstract: bool  (** the procedure is abstract *)
+    ; is_biabduction_model: bool  (** the procedure is a model for the biabduction analysis *)
+    ; is_bridge_method: bool  (** the procedure is a bridge method *)
+    ; is_defined: bool  (** true if the procedure is defined, and not just declared *)
+    ; is_cpp_noexcept_method: bool  (** the procedure is an C++ method annotated with "noexcept" *)
+    ; is_java_synchronized_method: bool  (** the procedure is a Java synchronized method *)
+    ; is_specialized: bool
+          (** the procedure is a clone specialized for dynamic dispatch handling *)
+    ; is_synthetic_method: bool  (** the procedure is a synthetic method *)
+    ; is_variadic: bool  (** the procedure is variadic, only supported for Clang procedures *)
+    ; clang_method_kind: ClangMethodKind.t  (** the kind of method the procedure is *)
+    ; loc: Location.t  (** location of this procedure in the source code *)
+    ; translation_unit: SourceFile.t  (** translation unit to which the procedure belongs *)
+    ; mutable locals: var_data list  (** name, type and attributes of local variables *)
+    ; method_annotation: Annot.Method.t  (** annotations for all methods *)
+    ; objc_accessor: objc_accessor_type option  (** type of ObjC accessor, if any *)
+    ; proc_name: Typ.Procname.t  (** name of the procedure *)
+    ; ret_type: Typ.t  (** return type *)
+    ; has_added_return_param: bool  (** whether or not a return param was added *) }
+end
+
+(** Should moved to istd *)
+module ARList = struct
+  (*
+  Invariants:
+  - elements of Concat are not empty (nor singletons)
+  - arg of Rev is not empty, nor singleton, nor Rev
+  - arg of Snoc is not empty
+  ...ensure that:
+  - an empty list is always represented by Empty,
+  - a singleton is always represented by Cons(_, Empty)
+  - the memory footprint is in Theta(length)
+
+  Potential constructors to add later:
+  - OfArray of 'a Array.t
+  - Flatten of 'a t t
+*)
+  type +'a t =
+    | Empty
+    | Cons of 'a * 'a t
+    | Snoc of 'a t * 'a
+    | Concat of 'a t * 'a t
+    | Rev of 'a t
+end
+
+module WeakTopologicalOrder = struct
+  module Partition = struct
+    type 'node t =
+      | Empty
+      | Node of {node: 'node; next: 'node t}
+      | Component of {head: 'node; rest: 'node t; next: 'node t}
+  end
+
+  module type PreProcCfg = sig
+    module Node : sig
+      type t
+
+      type id
+
+      val id : t -> id
+
+      module IdMap : Map.S with type key = id
+      (** ppmap in real code *)
+    end
+
+    type t
+
+    val fold_succs : t -> (Node.t, Node.t, 'accum) Base.Container.fold
+
+    val start_node : t -> Node.t
+  end
+
+  module type S = sig
+    module CFG : PreProcCfg
+
+    val make : CFG.t -> CFG.Node.t Partition.t
+  end
+
+  module type Make = functor (CFG : PreProcCfg) -> S with module CFG = CFG
+
+  module Bourdoncle_SCC (CFG : PreProcCfg) = struct
+    module CFG = CFG
+
+    module Dfn = CFG.Node.IdMap
+    (** [dfn] contains a DFS pre-order indexing. A node is not in the
+       map if it has never been visited. A node's dfn is +oo if it has
+       been fully visited (head of cross-edges) or we want to hide it
+       for building a subcomponent partition (head of highest
+       back-edges).  *)
+
+    (* Unlike Bourdoncle's paper version or OCamlGraph implementation,
+       this implementation handles high DFS-depth graphs, which would
+       stack-overflow otherwise. It still doesn't handle high
+       component nesting, but it is pretty unlikely to happen in real
+       code (means a lot of loop nesting).  *)
+
+    type stack =
+      { node: CFG.Node.t
+      ; node_id: CFG.Node.id
+      ; node_dfn: int
+      ; succs: CFG.Node.t list
+      ; mutable succs_to_visit: CFG.Node.t list
+      ; mutable head: int  (** Minimum [dfn] of the nodes accessibles from [node]. *)
+      ; mutable component: CFG.Node.id ARList.t
+            (** Nodes in the current strict-connected component. *)
+      ; mutable building_component: bool
+      ; next: stack option }
+  end
+end
+
+module Procdesc = struct
+  module NodeKey = struct
+    type t = Digest.t
+  end
+
+  module Node = struct
+    type id = int
+
+    type destruction_kind =
+      | DestrBreakStmt
+      | DestrContinueStmt
+      | DestrFields
+      | DestrReturnStmt
+      | DestrScope
+      | DestrTemporariesCleanup
+      | DestrVirtualBase
+
+    type stmt_nodekind =
+      | AssertionFailure
+      | BetweenJoinAndExit
+      | BinaryConditionalStmtInit
+      | BinaryOperatorStmt of string
+      | Call of string
+      | CallObjCNew
+      | CallRetBinding
+      | ClassCastException
+      | ConditionalStmtBranch
+      | ConstructorInit
+      | CXXDynamicCast
+      | CXXNewExpr
+      | CXXStdInitializerListExpr
+      | CXXTypeidExpr
+      | DeclStmt
+      | DefineBody
+      | Destruction of destruction_kind
+      | ExceptionHandler
+      | ExceptionsSink
+      | ExprWithCleanups
+      | FallbackNode
+      | FinallyBranch
+      | GCCAsmStmt
+      | GenericSelectionExpr
+      | IfStmtBranch
+      | InitializeDynamicArrayLength
+      | InitListExp
+      | MessageCall of string
+      | MethodBody
+      | MonitorEnter
+      | MonitorExit
+      | ObjCCPPThrow
+      | OutOfBound
+      | ReturnStmt
+      | Scope of string
+      | Skip of string
+      | SwitchStmt
+      | ThisNotNull
+      | Throw
+      | ThrowNPE
+      | UnaryOperator
+
+    type prune_node_kind =
+      | PruneNodeKind_ExceptionHandler
+      | PruneNodeKind_FalseBranch
+      | PruneNodeKind_InBound
+      | PruneNodeKind_IsInstance
+      | PruneNodeKind_MethodBody
+      | PruneNodeKind_NotNull
+      | PruneNodeKind_TrueBranch
+
+    type nodekind =
+      | Start_node
+      | Exit_node
+      | Stmt_node of stmt_nodekind
+      | Join_node
+      | Prune_node of bool * Sil.if_kind * prune_node_kind
+          (** (true/false branch, if_kind, comment) *)
+      | Skip_node of string
+
+    type t =
+      { id: id  (** uuid *)
+      ; mutable dist_exit: int option  (** distance to the exit node *)
+      ; mutable wto_index: int
+      ; mutable exn: t list  (** exception nodes in the cfg *)
+      ; mutable instrs: Instrs.not_reversed_t  (** instructions for symbolic execution *)
+      ; kind: nodekind
+      ; loc: Location.t
+      ; mutable preds: t list  (** predecessors *)
+      ; pname: Typ.Procname.t  (** name of the procedure the node belongs to *)
+      ; mutable succs: t list  (** successors *) }
+    (** a node *)
+
+    let compare : t -> t -> int = failwith "dummy"
+
+    type node = t
+
+    module NodeSet = Set.Make (struct
+      type t = node
+
+      let compare = compare
+    end)
+  end
+
+  module NodeSet = Node.NodeSet
+
+  type t =
+    { mutable attributes: ProcAttributes.t  (** attributes of the procedure *)
+    ; mutable nodes: Node.t list
+    ; mutable nodes_num: int
+    ; mutable start_node: Node.t
+    ; mutable exit_node: Node.t
+    ; mutable loop_heads: NodeSet.t option  (** loop head nodes of this procedure *)
+    ; mutable wto: Node.t WeakTopologicalOrder.Partition.t option }
+  (** Procedure Description *)
+end
+
+module Cfg = struct
+  type t = Procdesc.t Typ.Procname.Hash.t
 end
