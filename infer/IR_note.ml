@@ -1,3 +1,5 @@
+open Base_note
+
 module Ident = struct
   (** Module for Names and Identifiers *)
   module Name = struct
@@ -15,19 +17,6 @@ module Ident = struct
     | KPrimed
 
   type t = {kind: kind; name: Name.t; stamp: int}
-end
-
-module SourceFile = struct
-  type t =
-    | Invalid of {ml_source_file: string}
-    | Absolute of string
-    | RelativeProjectRoot of string  (** relative to project root *)
-    | RelativeInferBiabductionModel of string  (** relative to infer models *)
-end
-
-module Z = struct
-  type t = int
-  (** Dummy for Zarith module *)
 end
 
 module IntLit = struct
@@ -288,15 +277,6 @@ module Typ = struct
   end
 end
 
-module Location = struct
-  (** Location in the original source file *)
-
-  type t =
-    { line: int  (** line number. -1 menas "do not know" *)
-    ; col: int
-    ; file: SourceFile.t }
-end
-
 module Pvar = struct
   (** The Smallfoot Intermediate Language *)
 
@@ -338,5 +318,20 @@ module AccessPath = struct
     (* ignores types while comparing bases. we cannot trust the types
        from all of our frontends to be consistent, and the variable
        names should already be enough to distinguish the bases. *)
+    type base = Var.t * typ_
+
+    type access =
+      | ArrayAccess of typ_ * t list
+      | FieldAccess of Typ.Fieldname.t
+
+    and t = base * access list
   end
+
+  module Abs = struct
+    type raw = Raw.t
+
+    type t = Abstracted of Raw.t | Exact of Raw.t
+  end
+
+  include Raw
 end
