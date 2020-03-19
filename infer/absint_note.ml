@@ -491,9 +491,13 @@ module AbstractDomain = struct
 
     let widen ~prev ~next ~num_iters:_ = join prev next
   end
+
+  module WeakMap (Key : Caml.Map.OrderedType) (Value : WithBottom) = struct
+    include Map (Key) (Value)
+  end
 end
 
-module TransferFunction = struct
+module TransferFunctions = struct
   module type S = sig
     module CFG : ProcCfg.S
 
@@ -504,6 +508,30 @@ module TransferFunction = struct
     type instr
 
     val exec_instr : Domain.t -> extras ProcData.t -> CFG.Node.t -> instr -> Domain.t
+  end
+
+  module type SIL = sig
+    include S with type instr := Sil.instr
+  end
+
+  module type HIL = sig
+    include S with type instr := HilInstr.t
+  end
+
+  module type DisjunctiveConfig = sig
+    val join_policy : [`UnderApproximateAfter of int | `NeverJoin]
+
+    val widen_policy : [`UnderApproximateAfterNumIterations of int]
+  end
+
+  module type DisjReady = sig
+    module CFG : ProcCfg.S
+
+    module Domain : AbstractDomain.NoJoin
+
+    type extras
+
+    val exec_instr : Domain.t -> extras ProcData.t -> CFG.Node.t -> Sil.instr -> Domain.t list
   end
 end
 
@@ -533,5 +561,39 @@ module AbstractInterpreter = struct
 
   module State = struct
     type 'a t = {pre: 'a; post: 'a; visit_count: VisitCount.t}
+  end
+
+  module type S = sig
+    module TransferFunctions : TransferFunctions.SIL
+
+    module InvariantMap = TransferFunctions.CFG.Node.IdMap
+
+    type invariant_map = TransferFunctions.Domain.t State.t InvariantMap.t
+
+    val compute_post :
+         ?do_narrowing:bool
+      -> ?pp_instr:(TransferFunctions.Domain.t -> Sil.instr -> (Format.formatter -> unit) option)
+      -> TransferFunctions.extras ProcData.t
+      -> initial:TransferFunctions.Domain.t
+      -> TransferFunctions.Domain.t option
+
+    val exec_cfg :
+         ?do_narrowing:bool
+      -> TransferFunctions.CFG.t
+      -> TransferFunctions.extras ProcData.t
+      -> initial:TransferFunctions.Domain.t
+      -> invariant_map
+
+    val exec_pdesc :
+         ?do_narrowing:bool
+      -> TransferFunctions.extras ProcData.t
+      -> initial:TransferFunctions.Domain.t
+      -> invariant_map
+
+    val extract_post : InvariantMap.key -> 'a State.t InvariantMap.t -> 'a option
+
+    val extract_pre : InvariantMap.key -> 'a State.t InvariantMap.t -> 'a option
+
+    val extract_state : InvariantMap.key -> 'a InvariantMap.t -> 'a option
   end
 end
