@@ -1,5 +1,137 @@
 open Istd_note
 open Core
+open IR_note
+open Base_note
+
+module FormalMap = struct
+  type t = int AccessPath.BaseMap.t
+end
+
+module Payloads = struct
+  type t =
+    { annot_map: unit
+    ; biabduction: unit
+    ; buffer_overrun_analysis: unit
+    ; buffer_overrun_checker: unit
+    ; class_loads: unit
+    ; cost: unit
+    ; lab_resource_leaks: unit
+    ; litho: unit
+    ; pulse: unit
+    ; purity: unit
+    ; quandary: unit
+    ; racerd: unit
+    ; siof: unit
+    ; starvation: unit
+    ; typestate: unit
+    ; uninit: unit }
+end
+
+module Summary = struct
+  (*** should move to backend *)
+
+  module Stats = struct
+    type t =
+      { failure_kind: SymOp.failure_kind option
+            (** what type of failure stopped the analysis (if any) *)
+      ; symops: int  (** number of SYmOp's throughout the whole analysis of the function *)
+      ; mutable nodes_visited: Int.Set.t }
+  end
+
+  module Status = struct
+    type t =
+      | Pending  (** Summary has been created by the procedure has not been analyzed yet *)
+      | Analyzed
+  end
+
+  include struct
+    type t =
+      { payloads: Payloads.t
+      ; mutable sessions: int
+      ; stats: Stats.t
+      ; status: Status.t
+      ; proc_desc: Procdesc.t
+      ; err_log: Errlog.t
+      ; mutable callee_pnames: Typ.Procname.Set.t }
+  end
+end
+
+module ProcData = struct
+  type 'a t = {summary: Summary.t; tenv: Tenv.t; extras: 'a}
+
+  type no_extras = unit
+end
+
+module ProcCfg = struct
+  (** Control-flow graph for a single procedure (as opposed to cfg.ml, which represents a cfg for a file).
+      Defines useful wrappers that allows us to do tricks like turn a forward cfg into a backward one, or view a cfg as having a single instruction per node. *)
+
+  module type Node = sig
+    type t
+
+    type id
+
+    val kind : t -> Procdesc.Node.nodekind
+
+    val id : t -> id
+
+    val hash : t -> int
+
+    val loc : t -> Location.t
+
+    val underlying_node : t -> Procdesc.Node.t
+
+    val of_underlying_node : Procdesc.Node.t -> t
+
+    val compare_id : id -> id -> int
+
+    module IdMap : Caml.Map.S with type key = id
+
+    module IdSet : Caml.Set.S with type elt = id
+  end
+
+  module type S = sig
+    type t
+
+    type instrs_dir
+
+    module Node : Node
+
+    val instrs : Node.t -> instrs_dir Instrs.t
+    (** get the instructions from a node *)
+
+    val fold_succs : t -> (Node.t, Node.t, 'accum) Container.fold
+
+    val fold_preds : t -> (Node.t, Node.t, 'accum) Container.fold
+    (** fold over all predecessors (normal and exceptional) *)
+
+    val fold_normal_succs : t -> (Node.t, Node.t, 'accum) Container.fold
+    (** fold over non-exceptional successors *)
+
+    val fold_normal_preds : t -> (Node.t, Node.t, 'accum) Container.fold
+    (** fold over non-exceptional predecessors *)
+
+    val fold_exceptional_succs : t -> (Node.t, Node.t, 'accum) Container.fold
+    (** fold over exceptional successors *)
+
+    val fold_exceptional_preds : t -> (Node.t, Node.t, 'accum) Container.fold
+    (** fold over exceptional predecessors *)
+
+    val start_node : t -> Node.t
+
+    val exit_node : t -> Node.t
+
+    val proc_desc : t -> Procdesc.t
+
+    val fold_nodes : (t, Node.t, 'accum) Container.fold
+
+    val from_pdesc : Procdesc.t -> t
+
+    val is_loop_head : Procdesc.t -> Node.t -> bool
+
+    val wto : t -> Node.t WeakTopologicalOrder.Partition.t
+  end
+end
 
 module AbstractDomain = struct
   module Types = struct
@@ -264,5 +396,142 @@ module AbstractDomain = struct
       StackedUtils.combine ~dir:`Increasing prev next
         ~f_below:(fun prev next -> Below.widen ~prev ~next ~num_iters)
         ~f_above:(fun prev next -> Above.widen ~prev ~next ~num_iters)
+  end
+
+  module FiniteSetOfSet (S : Caml.Set.S) = struct
+    include S
+
+    let bottom = empty
+
+    let is_bottom = is_empty
+
+    let ( <= ) ~lhs ~rhs = if phys_equal lhs rhs then true else subset lhs rhs
+
+    let join a1 a2 = if phys_equal a1 a2 then a1 else union a1 a2
+
+    let widen ~prev ~next ~num_iters:_ = join prev next
+  end
+
+  module FiniteSet (Element : Caml.Set.OrderedType) = FiniteSetOfSet (Caml.Set.Make (Element))
+
+  module MapOfMap (M : Caml.Map.S) (ValueDomain : S) = struct
+    include (M : Caml.Map.S with type 'a t := 'a M.t and type key = M.key)
+
+    type t = ValueDomain.t M.t
+
+    type value = ValueDomain.t
+
+    let bottom = empty
+
+    let is_bottom = is_empty
+
+    let ( <= ) ~lhs ~rhs =
+      if phys_equal lhs rhs then true
+      else
+        M.for_all
+          (fun k l_v ->
+            try ValueDomain.( <= ) ~lhs:l_v ~rhs:(M.find k rhs) with Caml.Not_found -> false)
+          lhs
+
+    let increasing_union ~f a1 a2 =
+      if phys_equal a1 a2 then a1
+      else
+        let eq1 = ref true in
+        let eq2 = ref true in
+        let merge_vals _ v1_opt v2_opt =
+          match (v1_opt, v2_opt) with
+          | Some v1, Some v2 ->
+              let v = f v1 v2 in
+              if not (phys_equal v v1) then eq1 := false ;
+              if not (phys_equal v v2) then eq2 := false ;
+              Some v
+          | Some _, None ->
+              eq2 := false ;
+              v1_opt
+          | None, Some _ ->
+              eq1 := false ;
+              v2_opt
+          | None, None ->
+              None
+        in
+        let res = M.merge merge_vals a1 a2 in
+        if !eq1 then a1 else if !eq2 then a2 else res
+
+    let join a1 a2 = increasing_union ~f:ValueDomain.join a1 a2
+
+    let widen ~prev ~next ~num_iters =
+      increasing_union prev next ~f:(fun prev next -> ValueDomain.widen ~prev ~next ~num_iters)
+  end
+
+  module Map (Key : Caml.Map.OrderedType) (ValueDomain : S) = struct
+    module M = Caml.Map.Make (Key)
+    include MapOfMap (M) (ValueDomain)
+  end
+
+  module BooleanAnd : S with type t = bool = struct
+    type t = bool
+
+    let ( <= ) ~lhs ~rhs = lhs || not rhs
+
+    let join = ( && )
+
+    let widen ~prev ~next ~num_iters:_ = join prev next
+  end
+
+  module BooleanOr : WithBottom with type t = bool = struct
+    type t = bool
+
+    let bottom = false
+
+    let is_bottom a = not a
+
+    let ( <= ) ~lhs ~rhs = (not lhs) || rhs
+
+    let join = ( || )
+
+    let widen ~prev ~next ~num_iters:_ = join prev next
+  end
+end
+
+module TransferFunction = struct
+  module type S = sig
+    module CFG : ProcCfg.S
+
+    module Domain : AbstractDomain.S
+
+    type extras
+
+    type instr
+
+    val exec_instr : Domain.t -> extras ProcData.t -> CFG.Node.t -> instr -> Domain.t
+  end
+end
+
+module AbstractInterpreter = struct
+  type exec_node_schedule_result = ReachedFixPoint | DidNotReachFixPoint
+
+  (** Maximum number of widens that can be performed before the analysis will intentionally crash. 
+    Used to guard against divergence in the case that someone has implemented a bad widening operator *)
+  let max_widens = 10000
+
+  module VisitCount : sig
+    type t = private int
+
+    val first_time : t
+
+    val succ : pdesc:Procdesc.t -> t -> t
+  end = struct
+    type t = int
+
+    let first_time = 1
+
+    let succ ~pdesc visit_count =
+      let visit_count' = visit_count + 1 in
+      if visit_count' > max_widens then failwith "Exceeded max widening threshold" ;
+      visit_count'
+  end
+
+  module State = struct
+    type 'a t = {pre: 'a; post: 'a; visit_count: VisitCount.t}
   end
 end

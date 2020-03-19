@@ -248,7 +248,9 @@ module Typ = struct
       | ObjC_Cpp of ObjC_Cpp.t
       | WithBlockParameters of t * Block.block_name list
 
-    let equal = failwith "dummy"
+    let equal : t -> t -> bool = failwith "dummy"
+
+    let compare : t -> t -> int = failwith "dummy"
 
     let hash = Hashtbl.hash
 
@@ -261,6 +263,12 @@ module Typ = struct
     end
 
     module Hash = Hashtbl.Make (Hashable)
+
+    module Set = Set.Make (struct
+      type nonrec t = t
+
+      let compare = compare
+    end)
   end
 
   module Fieldname = struct
@@ -358,6 +366,12 @@ module AccessPath = struct
   end
 
   include Raw
+
+  module BaseMap = Caml.Map.Make (struct
+    type t = base
+
+    let compare : t -> t -> int = failwith "dummy"
+  end)
 end
 
 (********************************** Actual IR related *****************************)
@@ -1089,4 +1103,140 @@ end
 
 module Cfg = struct
   type t = Procdesc.t Typ.Procname.Hash.t
+end
+
+(***************************************** Related to Errlog *********************)
+module IssueType = struct
+  module Unsafe : sig
+    type t = private
+      { unique_id: string
+      ; mutable enabled: bool
+      ; mutable hum: string
+      ; mutable doc_url: string option
+      ; mutable linters_def_file: string option }
+  end = struct
+    module T = struct
+      type t =
+        { unique_id: string
+        ; mutable enabled: bool
+        ; mutable hum: string
+        ; mutable doc_url: string option
+        ; mutable linters_def_file: string option }
+
+      let compare {unique_id= id1} {unique_id= id2} = String.compare id1 id2
+
+      let equal = failwith "dummy"
+    end
+
+    include T
+    module IssueSet = Caml.Set.Make (T)
+  end
+
+  include Unsafe
+end
+
+module Localise = struct
+  module Tags = struct
+    type t = (string * string) list
+  end
+
+  type error_desc = {descriptions: string list; tags: Tags.t; dotty: string option}
+
+  type deref_str =
+    { tags: (string * string) list ref  (** tags for the error description *)
+    ; value_pre: string option  (** string printed before the value being dereferenced *)
+    ; value_post: string option  (** string printed after the value being dereferenced *)
+    ; problem_str: string  (** description of the problem *) }
+
+  type access =
+    | Last_assigned of int * bool
+    (* line, null_case_flag *)
+    | Last_accessed of int * bool
+    (* line, is_nullable flag *)
+    | Initialized_automatically
+    | Returned_from_call of int
+
+  (** kind of precondition not met *)
+  type pnm_kind = Pnm_bounds | Pnm_dangling
+end
+
+type ocaml_pos = string * int * int * int
+
+module Exceptions = struct
+  type visibility =
+    | Exn_user  (** always add to error log *)
+    | Exn_developer  (** only add to error log in developer mode *)
+    | Exn_system  (** never add to error log *)
+
+  (** class of error/warning *)
+  type err_class = Checker | Prover | Nocat | Linters
+
+  (** class of error/warning *)
+  type severity = Like | Info | Advice | Warning | Error
+
+  type t =
+    { name: IssueType.t
+    ; description: Localise.error_desc
+    ; ocaml_pos: ocaml_pos option  (** location in the infer source code *)
+    ; visibility: visibility
+    ; severity: severity option
+    ; category: err_class }
+end
+
+module Errlog = struct
+  type node_tag =
+    | Condition of bool
+    | Exception of Typ.name
+    | Procedure_start of Typ.Procname.t
+    | Procedure_end of Typ.Procname.t
+
+  type loc_trace_elem =
+    { lt_level: int  (** nesting level of procedure calls *)
+    ; lt_loc: Location.t  (** source location at the current step in the trace *)
+    ; lt_description: string
+    ; lt_node_tags: node_tag list }
+
+  type loc_trace = loc_trace_elem list
+
+  type node =
+    | UnknownNode
+    | FrontendNode of {node_key: Procdesc.NodeKey.t}
+    | BackendNode of {node: Procdesc.Node.t}
+
+  type err_key =
+    {severity: Exceptions.severity; err_name: IssueType.t; err_desc: Localise.error_desc}
+
+  type err_data =
+    { node_id: int
+    ; node_key: Procdesc.NodeKey.t option
+    ; session: int
+    ; loc: Location.t
+    ; loc_in_ml_source: ocaml_pos option
+    ; loc_trace: loc_trace
+    ; err_class: Exceptions.err_class
+    ; visibility: Exceptions.visibility
+    ; linters_def_file: string option
+    ; doc_url: string option
+    ; access: string option
+    ; extras: string option (* NOTE: Please consider adding new fields as part of extras *) }
+
+  module ErrDataSet = Caml.Set.Make (struct
+    type t = err_data
+
+    let compare : t -> t -> int = failwith "dummy; only compare loc"
+  end)
+
+  module ErrLogHash = struct
+    module Key = struct
+      type t = err_key
+
+      let hash key = Hashtbl.hash (key.severity, key.err_name)
+
+      let equal : t -> t -> bool = failwith "dummy"
+    end
+
+    include Hashtbl.Make (Key)
+  end
+
+  type t = ErrDataSet.t ErrLogHash.t
 end
