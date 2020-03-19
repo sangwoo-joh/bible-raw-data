@@ -78,3 +78,52 @@
 --b--b
 --
 ```
+
+
+## Practice
+ Pretty-printing annotations are introduced by the `@` symbol,
+ directly into the string format.
+
+ + `@[` opens a box (`open_box 0`). e.g., `@[<hov n>]` is equivalent
+   to `open_hovbox n`.
+ + `@]` closes a box (`close_box ()`)
+ + `@ ` puts a breakable space (`print_space ()`)
+ + `@,` puts a "cut" break hint (`print_cut ()`)
+ + `@;` puts a "full" break hint
+ + `@;<n m>` puts a "full" break hint with `nspaces` and `offset`
+   (`print_break n m`)
+ + `@.` ends the pretty-printing, closing all the boxes still
+   opened. (`print_newline ()`)
+ + `@<n>` prints the following item as if it were of length
+   `n`. e.g. `Format.printf "@<0>%s" arg` prints `arg` as a zero
+   length string.
+ + `@{` opens a semantic tag.
+ + `@}` closes the most recently opened semantic tag.
+ + `@?` flushes the pretty-printer as with `print_flush ()`
+ + `@\n` forces a newline, as with `force_newline ()`
+
+
+ For instance,
+
+``` ocaml
+Format.printf "@[<1>%s@ =@ %d@ %s@]@." "Prix TTC" 100 "Euros";;
+Prix TTC = 100 Euors
+```
+
+
+ Or, more concretely,
+
+``` ocaml
+open_box 0;
+print_string "x =";
+print_space ();
+print_int 1;
+close_box ();
+print_newline()
+```
+
+ is equal to
+
+``` ocaml
+Format.printf "@[%s@ %i@]@." "x =" 1
+```
