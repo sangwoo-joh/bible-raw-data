@@ -1,4 +1,5 @@
 open Base_note
+open Istd_note
 
 (*********************** Name related ***************************)
 module Ident = struct
@@ -143,6 +144,10 @@ module Typ = struct
     type t = name
     (** T.name *)
 
+    let equal : t -> t -> bool = failwith "dummy"
+
+    let hash = Hashtbl.hash
+
     module C = struct
       (** ... some values *)
     end
@@ -278,6 +283,15 @@ module Typ = struct
 
     type lookup = Name.t -> t option
   end
+end
+
+module Tenv = struct
+  module TypenameHash = Caml.Hashtbl.Make (Typ.Name)
+  module TypenameHashNormalizer = MaximumSharing.ForHashtbl (TypenameHash)
+
+  type t = Typ.Struct.t TypenameHash.t
+
+  type per_file = Global | FileLocal of t
 end
 
 module Subtype = struct
@@ -423,6 +437,126 @@ module CallFlags = struct
     ; cf_noreturn: bool
     ; cf_virtual: bool
     ; cf_with_block_parameters: bool }
+end
+
+module HilExp = struct
+  type typ_ = Typ.t
+
+  module Access = struct
+    type 'array_index t =
+      | FieldAccess of Typ.Fieldname.t
+      | ArrayAccess of typ_ * 'array_index
+      | TakeAddress
+      | Dereference
+  end
+
+  (** Module where unsafe construction of [access_expression] is allowed.
+      In the rest of the code, and especially in clients of the whole [AccessExpression] module,
+      we do not want to allow constructing access expressions directly as they could introduce
+      de-normalized expressions of the form [AddressOf (Dereference t)] or [Dereference (AddressOf t)].
+      We could make only the types of [AddressOf] and [Dereference] private but that proved too cumbersome...
+  *)
+
+  module T : sig
+    type t =
+      | AccessExpression of access_expression
+      | UnaryOperator of Unop.t * t * Typ.t option
+      | BinaryOperator of Binop.t * t * t
+      | Exception of t
+      | Closure of Typ.Procname.t * (AccessPath.base * t) list
+      | Constant of Const.t
+      | Cast of Typ.t * t
+      | Sizeof of Typ.t * t option
+
+    and access_expression = private
+      | Base of AccessPath.base
+      | FieldOffset of access_expression * Typ.Fieldname.t
+      | ArrayOffset of access_expression * typ_ * t option
+      | AddressOf of access_expression
+      | Dereference of access_expression
+
+    module UnsafeAccessExpression : sig
+      val base : AccessPath.base -> access_expression
+
+      val field_offset : access_expression -> Typ.Fieldname.t -> access_expression
+
+      val array_offset : access_expression -> Typ.t -> t option -> access_expression
+
+      val address_of : access_expression -> access_expression option
+
+      val address_of_base : AccessPath.base -> access_expression
+
+      val dereference : access_expression -> access_expression
+
+      val replace_base :
+        remove_deref_after_base:bool -> AccessPath.base -> access_expression -> access_expression
+    end
+  end = struct
+    type t =
+      | AccessExpression of access_expression
+      | UnaryOperator of Unop.t * t * Typ.t option
+      | BinaryOperator of Binop.t * t * t
+      | Exception of t
+      | Closure of Typ.Procname.t * (AccessPath.base * t) list
+      | Constant of Const.t
+      | Cast of Typ.t * t
+      | Sizeof of Typ.t * t option
+
+    and access_expression =
+      | Base of AccessPath.base
+      | FieldOffset of access_expression * Typ.Fieldname.t
+      | ArrayOffset of access_expression * typ_ * t option
+      | AddressOf of access_expression
+      | Dereference of access_expression
+
+    module UnsafeAccessExpression = struct
+      let base base = Base base
+
+      let field_offset t field = FieldOffset (t, field)
+
+      let array_offset t typ index = ArrayOffset (t, typ, index)
+
+      let address_of = function
+        | Dereference _ | AddressOf _ ->
+            None
+        | (FieldOffset _ | ArrayOffset _ | Base _) as t ->
+            Some (AddressOf t)
+
+      let address_of_base base = AddressOf (Base base)
+
+      let dereference = function AddressOf t -> t | t -> Dereference t
+
+      let rec replace_base ~remove_deref_after_base base_new access_expr =
+        let replace_base_inner = replace_base ~remove_deref_after_base base_new in
+        match access_expr with
+        | Dereference (Base _) ->
+            if remove_deref_after_base then Base base_new else Dereference (Base base_new)
+        | Base _ ->
+            Base base_new
+        | FieldOffset (ae, fld) ->
+            FieldOffset (replace_base_inner ae, fld)
+        | ArrayOffset (ae, typ, x) ->
+            ArrayOffset (replace_base_inner ae, typ, x)
+        | AddressOf ae ->
+            AddressOf (replace_base_inner ae)
+        | Dereference ae ->
+            Dereference (replace_base_inner ae)
+    end
+  end
+
+  include T
+
+  (** Why is this module needed? *)
+  module AccessExpression = struct
+    include UnsafeAccessExpression
+
+    type nonrec t = access_expression = private
+      | Base of AccessPath.base
+      | FieldOffset of access_expression * Typ.Fieldname.t
+      | ArrayOffset of access_expression * typ_ * t option
+      | AddressOf of access_expression
+      | Dereference of access_expression
+  end
 end
 
 module DecompiledExp = struct
@@ -677,6 +811,19 @@ module CallSite = struct
 end
 
 (************************************* CFG related ****************************)
+
+module HilInstr = struct
+  type call = Direct of Typ.Procname.t | Indirect of HilExp.AccessExpression.t
+
+  type t =
+    | Assign of HilExp.AccessExpression.t * HilExp.t * Location.t
+    | Assume of HilExp.t * [`Then | `Else] * Sil.if_kind * Location.t
+    | Call of AccessPath.base * call * HilExp.t list * CallFlags.t * Location.t
+    | Metadata of Sil.instr_metadata
+
+  type translation = Instr of t | Bind of Var.t * HilExp.AccessExpression.t
+end
+
 module Instrs = struct
   (* Some functions are only used on non-reversed arrays, let's specialize them.
   The argument of the type helps us make sure they can't be used otherwise. *)
@@ -758,30 +905,6 @@ module ProcAttributes = struct
     ; proc_name: Typ.Procname.t  (** name of the procedure *)
     ; ret_type: Typ.t  (** return type *)
     ; has_added_return_param: bool  (** whether or not a return param was added *) }
-end
-
-(** Should moved to istd *)
-module ARList = struct
-  (*
-  Invariants:
-  - elements of Concat are not empty (nor singletons)
-  - arg of Rev is not empty, nor singleton, nor Rev
-  - arg of Snoc is not empty
-  ...ensure that:
-  - an empty list is always represented by Empty,
-  - a singleton is always represented by Cons(_, Empty)
-  - the memory footprint is in Theta(length)
-
-  Potential constructors to add later:
-  - OfArray of 'a Array.t
-  - Flatten of 'a t t
-*)
-  type +'a t =
-    | Empty
-    | Cons of 'a * 'a t
-    | Snoc of 'a t * 'a
-    | Concat of 'a t * 'a t
-    | Rev of 'a t
 end
 
 module WeakTopologicalOrder = struct
