@@ -5,6 +5,22 @@
 \usepackage{hyperref}        % hyperlinks
 \usepackage{graphicx}
 \usepackage[english]{babel}
+\usepackage{mathtools}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter quote at the start of chapter        %
+% Source: http://tex.stackexchange.com/a/53380 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\renewcommand{\@chapapp}{}% Not necessary...
+\newenvironment{chapquote}[2][2em]
+  {\setlength{\@tempdima}{#1}%
+   \def\chapquote@author{#2}%
+   \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+   \itshape}
+  {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother
+
 
 \title{
   \Huge \textbf{Bible}
@@ -32,13 +48,51 @@
 This is personal bible, notes for everything I've learnt.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Introductory Chapter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Program Analysis}
+\begin{chapquote}{H.G. Rice [1953], \textit{paraphrased by Anders Moller}}
+  ``Everything interesting about the behaviour of programs is
+  undecidable.''
+\end{chapquote}
 
-% Maybe I need quote format later ...
-% \begin{chapquote}{Author's name, \textit{Source of this quote}}
-% ``This is a quote and I don't know who said this.''
-% \end{chapquote}
+The goal of \textit{static program analysis} is to verify specific
+properties (or behaviours) of the target program \textbf{without its
+  execution}.
+
+For program \textsl{P} and property (specification) \textsl{S},
+
+\begin{itemize}
+\item $ [|P|] $: Formal semantics of program \textsl{P}.
+
+\item \textsl{S}: Semantic properties that we're interested in. This
+  could be defined in various level, such as ``Division-by-zero will
+  \textbf{never} occur'' or ``The variable \textit{i} is always 3''.
+
+\item Soundness: $ analysis(P) = true \implies S $, in other words, if
+  an analysis for program \textsl{P} says that it satisfies property
+  \textsl{S}, then the program will truly satisfy that property.
+
+\item Completeness: $ S \implies analysis(P) = true $, in other words,
+  if a program satisfies a property \textsl{S}, then the analysis for
+  that program says that it will satisfy that property.
+
+\item Scalability: Time complexity.
+\end{itemize}
+
+
+\section{Semantics}
+\label{sec:semantics}
+
+\begin{itemize}
+\item Operational Semantics: transitional
+\item Denotational Semantics: compositional
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Abstract Interpretation}
+\label{chap:ai}
+
 
 
 \end{document}
