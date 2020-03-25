@@ -44,3 +44,5 @@
 
 ## Others
  - Huffman Coding
+ - [Memory
+   Allocation](http://www.cs.cmu.edu/afs/cs/academic/class/15213-s11/www/lectures/20-allocation-advanced.pdf)
