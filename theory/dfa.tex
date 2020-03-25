@@ -1,7 +1,200 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Data Flow Analysis}
 \label{chap:data-flow-analysis}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Prerequisites}
+
+\subsubsection{While-programs}
+
+\begin{math}
+  \begin{array}{lll}
+    a & = & x \blank|\blank n \blank|\blank a_1 \mathtt{op}_a a_2 \\
+    b & = & \mathtt{true} \blank|\blank \mathtt{false} \blank|\blank \mathtt{not} b \blank|\blank b_1 \mathtt{op}_b b_2 \blank|\blank a_1 \mathtt{op}_r a_2 \\
+    S & = & [x := a]^l \blank|\blank [skip]^l \blank|\blank S_1; S_2 \blank|\blank \mathtt{if} \blank [b]^l \mathtt{then} \blank S_1 \blank \mathtt{else} \blank S_2 \blank|\blank \mathtt{while}\blank [b]^l \blank \mathtt{do} \blank S
+  \end{array}
+\end{math}
+
+
+\begin{itemize}
+\item Label $l$ denotes the program point (location of code).
+\item $init(S)$ is the label of the first elementary bloc of $S$.
+\item $final(S)$ is the set of labels of the last elementary blocks of
+  $S$.
+\item $labels(S)$ is the entire set of labels in the statement $S$.
+\item Flows $flow(S)$ is the forward representation of how control
+  flows in $S$.
+\item Reverse flows $flow^R(S)$ is the backward representation of how
+  control flows in $S$.
+\item A statement consists of a set of \textit{elementary blocks}
+  where $blocks : Stmt \to \mathcal{P}(Blocks)$
+\item A statement $S$ is \textit{label consistent} iff any two
+  elementary statements $[S_1]^l$ and $[S_2]^l$ with the same label in
+  $S$ are equal: $S_1 = S_2$
+\item A statement where all labels are unique is automatically label
+  consistent.
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Intra-procedural Analysis}
+
+\subsection{Available Expressions Analysis}
+
+For each program point, which expressions must have already been
+computed, and not later modified, on all paths to the program point?
+
+
+\subsection{Reaching Definitions Analysis}
+
+For each program point, which assignments may have been made and not
+overwritten, when program execution reaches this point along some
+path?
+
+\subsection{Very Busy Expressions Analysis}
+
+An expression is \textit{very busy} at the exit from a label if, no
+matter what path is taken from the label, the expression is always
+used before any of the variables occurring in it are re-defined.
+
+The aim of the analysis is to determine for each program point, which
+expressions must be very busy at the exit from the point.
+
+\subsection{Live Variables Analysis}
+
+A variable is \textit{live} at the exit from a label if there is a
+path from the label to a \texttt{use} of the variable that does not
+re-define the variable.
+
+The aim of the analysis is to determine for each program point, which
+variables may be live at the exit from the point.
+
+\subsection{Derived Data Flow Information}
+
+\begin{itemize}
+\item Use-Def Chains: each \texttt{use} of a variable is linked to all
+  \textbf{assignments} that reach it.
+\item Def-Use Chains: each \texttt{assignment} to a variable is linked
+  to all \texttt{use}s of it.
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Monotone Frameworks}
+
+Each of the four classical analyses take the form
+
+\begin{math}
+  \begin{array}{lcl}
+    \mathit{Analysis}_i(l) & = &
+                                 \begin{cases}
+                                   i & \mathtt{if} \blank l \in E \\
+                                   \join \{ \mathit{Analysis}(l') | (l', l) \in F \} & otherwise
+                                 \end{cases} \\
+    \\
+    \mathit{Analysis}(l) & = & f_l(\mathit{Analysis}_i(l)) \\
+  \end{array}
+\end{math}
+
+where
+
+\begin{itemize}
+\item $\join$ is $\cap$ or $\cup$ (and $\meet$ is $\cup$ or $\cap$)
+\item $F$ is either $flow(S_*)$ or $flow^R(S_*)$
+\item $E$ is $\{ init(S_*) \}$ or $final(S_*)$
+\item $i$ specified the initial or final analysis information
+\item $f_l$ is the transfer function associated with $B^l \in blocks(S_*)$
+\end{itemize}
+
+\subsection{The Principles}
+
+Forward vs. Backward
+
+\begin{itemize}
+\item \textbf{Forward analyses} have $F$ to be $flow(S_*)$ and then
+  $\mathit{Analysis}_i$ concerns entry conditions and
+  $\mathit{Analysis}$ concerns exit conditions; the equation system
+  pre-supposes that $S_*$ has isolated entries.
+\item \textbf{Backward analyses} have $F$ to be $flow^R(S_*)$ and then
+  $\mathit{Analysis}_i$ concerns exit conditions and
+  $\mathit{Analysis}$ concerns entry conditions; the equation system
+  pre-supposes that $S_*$ has isolated exits.
+\end{itemize}
+
+
+Union vs. Intersection
+
+\begin{itemize}
+\item When $\join$ is $cap$, we require the \textbf{greatest sets}
+  that solve the equations and we are able to detect properties
+  satisfied by \textit{all execution paths} reaching (or leaving) the
+  entry (or exit) of a label; the analysis is called a
+  \textbf{must}-analysis.
+\item When $\join$ is $\cup$, we require the \textbf{smallest sets}
+  that solve the equations and we are able to detect properties
+  satisfied by \textit{at least one execution path} to (or from) the
+  entry (or exit) of a label; the analysis is called a
+  \textbf{may}-analysis.
+\end{itemize}
+
+
+\subsection{Transfer Functions}
+
+The set of transfer functions $\mathcal{F}$ is a set of
+\textbf{monotone functions} over $L$, meaning that
+
+\begin{math}
+  \begin{array}{lcl}
+    l \sle l' & \implies & f_l(l) \sle f_l(l')
+  \end{array}
+\end{math}
+
+and furthermore they fulfill the following conditions:
+
+\begin{itemize}
+\item $\mathcal{F}$ contains \textit{all} the transfer functions $f_l : L \to L $ in question (for $l \in Lab_* $ )
+\item $\mathcal{F}$ contains the \textit{identity function}
+\item $\mathcal{F}$ is \textit{closed} under \textit{composition} of
+  functions
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Equation Solving}
+
+\subsection{The MFP Solution}
+
+MFP stands for ``Maximum'' (actually least) Fixed Point.  The key idea
+is to iterate until stabilisation.
+
+
+
+
+
+\subsection{The MOP Solution}
+
+MOP stands for ``Meet'' (actually join) Over all Paths.  The key idea
+is to propagate analysis information along paths.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Inter-procedural Analysis}
+
+
+\subsection{The MVP Solution}
+
+MVP stands for ``Meet'' over Valid Paths.
+
+We need to match procedure entries and exits:
+
+A \textit{complete path} from $l_1$ to $l_2$ in $P_*$ has proper
+nesting of procedure entries and exits; and a procedure returns to the
+point where it was called.
+
+
 
 %%% Local Variables:
 %%% mode: latex
