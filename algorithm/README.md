@@ -7,6 +7,7 @@
  - Trie
  - B-Tree
  - Splay Tree
+ - Disjoint Set (Union-find)
 
 ## Sort
  - Merge Sort
