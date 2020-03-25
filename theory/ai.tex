@@ -1,0 +1,24 @@
+\chapter{Abstract Interpretation}
+\label{chap:ai}
+
+\section{Abstract States}
+\label{sec:abstract-states}
+
+The \textbf{complete lattice} of abstract states
+$ ( \hat{State}, \sle ) $ where
+\\
+\begin{math}
+  \hat{State} : Var \to \hat{Var}
+\end{math}
+
+with the point-wise ordering
+\\
+\begin{math}
+  \hat{s}_1 \sle \hat{s}_2 \iff \forall x \in Var. \hat{s}_1(x) \sle
+  \hat{s}_2(x).
+\end{math}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "program-analysis"
+%%% End:
