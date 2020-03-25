@@ -8,6 +8,7 @@
 \usepackage{mathtools}
 \usepackage{stmaryrd}
 \usepackage{amsfonts}
+\usepackage{array}
 
 \graphicspath{ {./images/} }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,6 +134,26 @@ area). It proves all the programs. In other words, it \textbf{wrongly
 satisfy $ S(P) $ by accepting those programs (i.e., emitting no
 alarms), thus it is \textit{unsound}. Those programs are \textbf{false
   negatives}.
+
+
+The table \ref{tab:summary} shows the summary of soundness and
+completeness.
+
+\begin{table}[ht]
+  \centering
+  \caption{Sound \& Complete Summary}
+  \label{tab:summary}
+
+  \begin{tabular}[t]{l>{\raggedright}p{0.3\linewidth}>{\raggedright\arraybackslash}p{0.3\linewidth}}
+    \hline
+    & $ S(P) $ & $ \neg S(P) $ \\
+    \hline
+    Prove \texttt{(accept)} & \textbf{True negative} (\textsl{correct inference}) & False negative \\
+    Not prove \texttt{(reject, alarm)} & False positive & \textbf{True positive} (\textsl{correct inference}) \\
+    \hline
+  \end{tabular}
+\end{table}%
+
 
 
 \section{Semantics}
