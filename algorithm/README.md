@@ -6,6 +6,7 @@
  - Segment Tree
  - Trie
  - B-Tree
+ - Splay Tree
 
 ## Sort
  - Merge Sort
