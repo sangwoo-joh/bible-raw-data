@@ -1,6 +1,348 @@
 \chapter{Pointer Analysis}
 \label{chap:pointer-analysis}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+\textit{Pointer analysis} or \textit{Points-to Analysis} is a static
+program analysis that determines information on the values of pointer
+variables or expressions.  Such information offers a static model of a
+program's \textbf{heap}.  Since the heap is the primary structure for
+\textit{global program data}, pointer analysis forms the substrate of
+most \textbf{inter-procedural} static analyses.
+
+
+The axes of \textit{precision} and \textit{performance} characterize
+every approach to program reasoning. All interesting questions about
+universal (i.e., all-inputs) program behaviour are
+\textbf{undecidable}. We can use these axes to guide a more general
+overview of the landscape of techniques for reasoning about program
+memory. Further along the precision axis lie several approaches such
+as \textit{shape analysis} and \textit{separation logic}. Separation
+logic is a full-fledged logic, typically deep in the forests of
+undecidability, where reasoning requires close human guidance. Shape
+analysis is computable, automated program analysis, yet with
+performance complexity in the territory of intractability: complexity
+bounds for the best-known shape analyses are super-exponential.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Core Pointer Analysis}
+
+The standard formulation of a pointer analysis is as a computation of
+the set of objects (the \textit{points-to set}) that a program
+variable may point to during runtime.
+
+
+The conventional approach for abstraction of heap objects is to
+represent objects as \textit{allocation sites}, i.e., to consider a
+\textbf{single abstract object} to stand in for each run-time object
+allocated by the same instruction. The precision for the number of
+memory allocation invocation is typically \textit{lost} in the
+approximation performed by the analysis that is done statically.
+
+
+\subsection{Andersen-Style Points-To Analysis, Declaratively}
+
+The best-known and most straightforward pointer analysis algorithm is
+Andersen-style, which can be easily expressed as \textit{subset
+  constraints}: different program statements induce inferences of the
+form ``points-to set A is a subset of points-to set B'', or,
+computationally, ``add all elements from points-to set A to points-to
+set B''.
+
+
+Computation in Datalog consists of monotonic logical inferences that
+repeatedly apply to produce more facts until a fixpoint is reached. A
+Datalog rule ``$C(z,x) \gets A(x,y), B(y,z)$'' means that if $A(x,y)$
+and $B(y,z)$ are both true, for same values $x,y,z$, then $C(z,x$) can
+be inferred. Syntatically, the left arrow symbol ($\gets$) separates
+the \textit{inferred} facts (the \textit{head} of the rule) from the
+\textit{previously established} facts (the \textit{body} of the rule).
+
+
+The target language is a simple intermediate language with the
+followings:
+
+\begin{itemize}
+\item \texttt{Alloc}: allocating an object on heap. $ var = new ... $
+\item \texttt{Move}: copying between local variables. $ to = from $
+\item \texttt{Store}, \texttt{Load}: instructions for writing to the
+  heap (or to object fields). $ to = base.fld $ and
+  $ base.fld = from $
+\item \texttt{Vcall}: virtually calling the method of the appropriate
+  signature defined in the dynamic class of the receiver object.
+  $ base.sig(...)$
+\end{itemize}
+
+
+Figure \ref{fig:pta-domain}, \ref{fig:input-relations}, and
+\ref{fig:computed-relations} shows the domain\footnote{the different
+  value sets that consistute the space of our computation} of the
+analysis, its input relations, and the computed (intermediate and
+output) relations respectively.
+
+\paragraph{Input Relations}
+
+The input relations correspond to the intermediate language. They are
+logically grouped into relations that represent \textit{instructions}
+and \textit{relations} that represent \textit{name-and-type}
+information.
+
+Similarily, there are relations that encode \textbf{type system},
+\textbf{symbol table}, and \textbf{program environment}.
+\begin{itemize}
+\item \texttt{FormalArg}: shows which variable is a formal argument of
+  a given method at a certain index, the \textit{n}-th argument.
+\item \texttt{LookUp}: matches a method signature to the actual method
+  definition inside a type.
+\item \texttt{HeapType}: matches an object to its type, and is a
+  function of its first argument.
+\item \texttt{ActualReturn}: a function of its first argument (a
+  method invocation site) and returns the local variable at the call
+  site that receives the method call's return value.
+\item \texttt{VarType}: maps a variable to its type.
+\item \texttt{SubType}: links a type to its supertypes.
+\item \texttt{InMethod}: function from instructions to their
+  containing method.
+\end{itemize}
+
+
+\paragraph{Computed Relations}
+
+The main output relations are \texttt{VarPointsTo} and
+\texttt{CallGraph}, encoding our points-to and call-graph information.
+
+
+\begin{figure}[ht]
+  \centering
+
+  \begin{math}
+    \begin{array}{lcl}
+      V & : & \text{a set of program variables} \\
+      H & : & \text{a set of heap abstractions, i.e., the allocation sites} \\
+      M & : & \text{a set of method identifiers, i.e., the function names} \\
+      S & : & \text{a set of method signatures including name, type signature} \\
+      F & : & \text{a set of fields} \\
+      I & : & \text{a set of instructions} \\
+      T & : & \text{a set of class types} \\
+      \mathbb{N} & : & \text{the set of natural numbers}
+    \end{array}
+  \end{math}
+
+  \caption{Domain}
+  \label{fig:pta-domain}
+\end{figure}
+
+
+\begin{figure}
+
+  \begin{math}
+    \begin{array}{l}
+      \mathtt{Alloc}(\mathtt{var}: V, \mathtt{heap}: H, \mathtt{inMeth}: M) \\
+      \mathtt{Move}(\mathtt{to}: V, \mathtt{from}: V) \\
+      \mathtt{Load}(\mathtt{to}: V, \mathtt{base}: V, \mathtt{fld}: F) \\
+      \mathtt{Store}(\mathtt{base}: V, \mathtt{fld}: F, \mathtt{frome}: V) \\
+      \mathtt{Vcall}(\mathtt{base}: V, \mathtt{sig}: S, \mathtt{invo}: I, \mathtt{inMeth}: M) \\
+      \\
+      \\
+      \mathtt{FormalArg}(\mathtt{meth}: M, \mathtt{n}: \mathbb{N}, \mathtt{arg}: V) \\
+      \mathtt{ActualArg}(\mathtt{invo}: I, \mathtt{n}: \mathbb{N}, \mathtt{arg}: V) \\
+      \mathtt{FormalReturn}(\mathtt{meth}: M, \mathtt{ret}: V) \\
+      \mathtt{ActualReturn}(\mathtt{invo}: I, \mathtt{var}: V) \\
+      \mathtt{ThisVar}(\mathtt{meth}: M, \mathtt{this}: V) \\
+      \mathtt{HeapType}(\mathtt{heap}: H, \mathtt{type}: T) \\
+      \mathtt{LookUp}(\mathtt{type}: T, \mathtt{sig}: S, \mathtt{meth}: M) \\
+      \mathtt{VarType}(\mathtt{var}: V, \mathtt{type}: T) \\
+      \mathtt{InMethod}(\mathtt{instr}: I, \mathtt{meth}: M) \\
+      \mathtt{Subtype}(\mathtt{type}: T, \mathtt{superT}: T) \\
+    \end{array}
+  \end{math}
+
+  \caption{Input Relations}
+  \label{fig:input-relations}
+\end{figure}
+
+
+\begin{figure}
+  \begin{math}
+    \begin{array}{l}
+      \mathtt{VarPointsTo}(\mathtt{var}: V, \mathtt{heap}: H) \\
+      \mathtt{CallGraph}(\mathtt{invo}: I, \mathtt{meth}: M) \\
+      \mathtt{FldPointsTo}(\mathtt{baseH}: H, \mathtt{fld}: F, \mathtt{heap}: H) \\
+      \mathtt{InterProcAssign}(\mathtt{to}: V, \mathtt{from}: V) \\
+      \mathtt{Reachable}(\mathtt{meth}: M) \\
+    \end{array}
+  \end{math}
+
+  \caption{Computed Relations}
+  \label{fig:computed-relations}
+\end{figure}
+
+
+\paragraph{Analysis Logic}
+
+Figure \ref{fig:andersen-logic} shows a complete Andersen-style
+points-to analysis for intermediate language.
+
+For example, the first rule states that, if we have computed that a
+method is reachable and it contains the allocation of an abstract
+object, \textit{heap}, directly assigned to local variable
+\textit{var}, then \textit{var} is inferred to points to
+\textit{heap}.
+
+The analysis integreates two features that merit discussion, since
+they represent standard variability axes in the literature:
+
+\begin{itemize}
+\item \textbf{Field sensitivity}: the ability of the analysis to
+  distinguish different fields of the same abstract object, instead of
+  lumping all fields together. This reflected in our ruels for
+  handling \texttt{Store} and \texttt{Load} instructions: A
+  \texttt{Store} input fact, together with prior \texttt{VarPointsTo}
+  inferences, leads to computing a \texttt{FldPointsTo} relation fact
+  for the given heap object and field. The \texttt{FldPointsTo} facts
+  are later used in the handling of \texttt{Load} instructions, as the
+  respective rule shows.
+
+  The alternative would be a \textit{field-insensitive} analysis,
+  which ignores which object fiels is used in those instructions.
+
+  Yet another option is a \textit{field-based} analysis, which
+  distinguishes fields but only identifies \texttt{FldPointsTo} facts
+  by the heap object's type and not its full identity.
+
+  Without extensive experimentation with real programs, it is hard to
+  predict whether such tradeoffs will pay off. Performance often
+  exhibits sharp discontinuities: the lack of precision may end up
+  also hurting performance, since the manipulated points-to sets can
+  be larget.
+
+\item \textbf{On-the-fly call-graph construction}: the property that a
+  points-to analysis also infers simultaneously which methods are
+  called at each call-site. The two questions of ``what objects can a
+  variable point to?'' and ``which function can get called at this
+  call-site?'' are closely inter-related in any higher-order
+  language. Generally, virtual calls in object-oriented languages and
+  first-class functions in a functional language necessitate that
+  call-graph computation have a model of points-to
+  information. On-the-fly call-graph construction typically leads to a
+  significantly more precise call-graph, which, in turn, enhances the
+  precision of the points-to analysis. The two analyses are in a
+  virtuous circle, with each helping the other achieve precision
+  without wasting effort in spurious inferences.
+
+  On-the-fly call-graph construction is reflected in the rule for
+  \texttt{Vcall}. This is the most involved rule of Andersen-style
+  algorithm. It states that, if the program has an instruction making
+  a virtual method call over local variable \textit{base}, and if the
+  computation so far has established that \textit{base} can point to
+  heap object \textit{heap} in a reachable method, then the called
+  method is looked up by-signature inside the type of \textit{heap}
+  and several further facts are inferred: that the looked up method is
+  \textbf{reachable}, that it has an edge in the call-graph from the
+  current invocation site, and that its \textit{this} variable can
+  point to \textit{heap}.
+
+  Furthermore, the computed call-graph information is used to
+  \textbf{flow} points-to information between actual and formal
+  parameters of methods. For instance, if we have computed a
+  call-graph edge between invocation site \textit{invo} and method
+  \textit{meth}, then we infer an inter-procedural assignment to the
+  \textit{i}-th formal argument of \textit{meth} from the
+  \textit{i}-th actual argument at \textit{invo}, for every
+  \textit{i}. Such assignments are treaed much like local assignments.
+
+  Although on-the-fly call-graph construction is typically
+  advantageous, there are several alternatives in the literature. A
+  conservative \textit{a priori} call-graph computation has the
+  advantage of speed, as well as of easier handling of complex
+  language features (e.g., reflective calls). The techcniques of
+  \textit{Rapid Type Analysis (RTA)} and \textit{Class Hierarchy
+    Analysis (CHA)} are the most commonly used in this space. Both
+  techniuqes employ only type information to determine an
+  over-approximation of all methods potentially called at a site.
+\end{itemize}
+
+
+\begin{figure}[ht]
+  \begin{math}
+    \begin{array}[\textwidth]{lcl}
+      \mathtt{VarPointsTo(var, heap)} & \gets & \mathtt{Reachable(meth), Alloc(var, heap, meth)} \\
+      \\
+      \mathtt{VarPointsTo(to, heap)} & \gets & \mathtt{Move(to, from), VarPointsTo(from, heap)} \\
+      \\
+      \mathtt{FldPointsTo(baseH, fld, heap)} & \gets & \mathtt{Store(base, fld, from), VarPointsTo(from, heap)} \\
+      & & \mathtt{VarPointsTo(base, baseH)} \\
+      \\
+      \mathtt{VarPOintsTo(to, heap)} & \gets & \mathtt{Load(to, base, fld), VarPointsTo(base, baseH)} \\
+      & & \mathtt{FldPointsTo(baseH, fld, heap)} \\
+      \\
+      \mathtt{Reachable(toMeth)},  & & \mathtt{Vcall(base, sig, invo, inMeth)}, \mathtt{Reachable(inMeth)}, \\
+      \mathtt{VarPointsTo(this, heap)}, & \gets & \mathtt{VarPointsTo(base, heap)}, \mathtt{HeapType(heap, heapT)}, \\
+      \mathtt{CallGraph(invo, toMeth)} & & \mathtt{LookUp(heapT, sig, toMeth), ThisVar(toMeth, this)} \\
+      \\
+      \mathtt{InterProcAssign(to, from)} & \gets & \mathtt{CallGraph(invo, meth), FormalArg(meth, n, to)} \\
+      & & \mathtt{ActualArg(invo, n, from)} \\
+      \\
+      \mathtt{InterProcAssign(to, from)} & \gets & \mathtt{CallGraph(invo, meth), FormalReturn(meth, from), } \\
+      & & \mathtt{ActualReturn(invo, to)} \\
+      \\
+      \mathtt{VarPointsTo(to, heap)} & \gets & \mathtt{InterProcAssign(to, from), VarPointsTo(from, heap)} \\
+    \end{array}
+  \end{math}
+
+  \caption{Andersen Algorithm}
+  \label{fig:andersen-logic}
+\end{figure}
+
+
+The analysis \textbf{loses precision} relative to an ideal result, but
+this is hardly a surprise. Any algorithm for an undecidable algorithm
+will sacrifice precision for computability. Notably, the algorithm is
+still \textit{sound}, if a fact is true the algorithm will infer
+it. Generally, pointer analysis is a \textit{may-analysis}: its
+inferences intend to \textbf{over-approximate} actual program
+behaviour. The opposite is \textit{must-analysis} that intends to
+\textbf{under-approximate}.
+
+
+
+
+\subsection{Other Approaches}
+
+\paragraph{Steensgaard's Analysis}
+
+Steensgaard-style pointer analysis is best termed
+\textit{unification-based} and uses \textit{equality constraints} as
+opposed to the subset constraints of the Andersen approach.
+
+Steensgaard-style analyses have been quite popular, especially in
+procedural languages like C, due to their simplicity and unparalleled
+speed. However, they have become \textit{progressively less used} in
+recent PL and moder settings, where the speed of an Andersen-style
+analysis is usually quite sufficient.
+
+
+
+\paragraph{Other Heap Abstractions}
+
+Not just variables but entire expressions, or syntactic abstractions
+over them, can be used as the root elements of an analysis. This
+obviates the need to represent \textit{allocation sites} or
+\textit{objects} explicitly.
+
+The \textbf{access path} abstraction approach generalizes alias
+relations by expressing all knowledge about the heap in terms of
+relationships between pointer expressions. An access path is \textit{a
+  variable qualifed by a sequence of field names}. Access paths can be
+statically summarized syntactically in order to capture unbounded
+runtime field chains. An analysis can use access paths internally or
+in expressing its computed output.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "program-analysis"
