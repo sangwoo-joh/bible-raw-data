@@ -1,4 +1,3 @@
-
 \chapter{Prerequisites}
 \begin{chapquote}{H.G. Rice [1953], \textit{paraphrased by Anders Moller}}
   ``Everything interesting about the behaviour of programs is
@@ -30,7 +29,188 @@ For program \textsl{P} and property \textsl{S},
 \textbf{No analysis} can be sound and complete at the same time. If an
 analysis is sound, then it is also incomplete, and vice versa.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Relation Theory}
+This note originates from
+Proofwiki\footnote{https://proofwiki.org}.
 
+
+\textbf{Relation theory} is the subfield of set theory concerned with
+the properties of relations and relational structures. As a relation
+has the same conceptual definition as a (graph-theoretical) graph, it
+follows that there is considerable overlap between the fields of
+relation theory and graph theory.
+
+
+\subsection{Relation}
+\subsubsection{Definition}
+Let $S \times T$ be the Cartesian product of two sets $S$ and $T$.
+
+A \textbf{relation} on $S \times T$ is an ordered triple
+$ \mathcal{R} = (S, T, R) $ where $R \subseteq S \times T$ is a
+subset of the Cartesian product of $S$ and $T$.
+
+What this means is that a \textbf{relation} \textit{relates} (certain)
+elements of one set or class $S$ with (certain) elements of another,
+$T$. Not all elements of $S$ need to be related to every (or even any)
+element of $T$.
+
+\subsubsection{Notation}
+
+If $(x, y)$ is an ordered pair such that $(x, y) \in \mathcal{R}$, we
+use the notation: $ s \mathcal{R} t$ or $ \mathcal{R}(s, t)$ and can
+say:
+\begin{itemize}
+\item $s$ bears $\mathcal{R}$ to $t$
+\item $s$ stands in the relation $\mathcal{R}$ to $t$
+\end{itemize}
+
+\subsubsection{General Definition}
+Let
+$\mathbb{S} = \Pi^n_{i=1}S_i = S_1 \times S_2 \times ... \times S_n $
+be the Cartesian product on $n$ sets $S_1, ..., S_n$.
+
+An \textbf{$n$-ary relation on} $\mathbb{S}$ is an ordered
+$n+1$-tuple $\mathcal{R}$ defined as
+$\mathcal{R} := (S_1, S_2, ..., S_n, R)$, where $R$ is an arbitrary
+subset $R \subseteq \mathbb{S}$.
+
+To indicate that $(s_1, s_2, ..., s_n) \in R$, we
+write: $\mathcal{R}(s_1, s_2, ..., s_n)$
+
+\subsubsection{Unary Relation}
+As a special case of an $n$-ary relation on $S$, note that when $n=1$
+we define a \textbf{unary relation} on $S$ as
+$\mathcal{R} \subseteq S$. That is, a \textbf{unary relation} is a
+subset of $S$.
+
+\subsubsection{Endorelation}
+Let $S \times S$ be the Cartesian product of a set or class $S$ with
+itself. Let $\mathcal{R}$ be a \textbf{relation} on $S \times S$. Then
+$\mathcal{R}$ is referred to as an \textbf{endorelation on} $S$.
+
+
+The term \textbf{endorelation} is rarely seen. Once it is established
+that the \textit{domain and codomain of a given relation are the same
+  set}, further comment is rarely needed.
+
+
+An \textbf{endorelation} is also called a \textbf{relation in} $S$, or
+a \textbf{relation on} $S$. The latter term is discouraged, though,
+because it can also mean a left-total relation, and confusion can
+arise.
+
+Some sources use the term \textbf{binary relation} exclusively to
+refer to a \textbf{binary endorelation}.
+
+
+\subsection{Symmetry}
+\label{sec:symmetry}
+The word \textit{symmetry} comes from Greek symmetria meaning
+\textbf{measure together}.
+
+\subsubsection{Definition}
+
+Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
+
+
+
+\paragraph{Symmetric}
+
+$\mathcal{R}$ is \textbf{symmetric} if and only if
+$(x, y) \in \mathcal{R} \implies (y, x) \in \mathcal{R}$.
+
+\paragraph{Asymmetric}
+
+$\mathcal{R}$ is \textbf{asymmetric} if and only if
+$(x, y) \in \mathcal{R} \implies (y, x) \notin \mathcal{R}$.
+
+\paragraph{Antisymmetric}
+
+$\mathcal{R}$ is \textbf{antisymmetric} if and only if
+$ (x,y) \in \mathcal{R} \land (y, x) \in \mathcal{R} \implies x = y $.
+That is, $\{(x, y), (y, x) \} \subseteq \mathcal{R} \implies x = y $.
+
+\paragraph{Non-symmetric}
+
+$\mathcal{R}$ is \textbf{non-symmetric} if and only if it is neither
+\textit{symmetric} nor \textit{asymmetric}.
+
+\subsubsection{Antisymmetric and Asymmetric}
+
+Note the difference between:
+\begin{itemize}
+\item An \textit{asymmetric relation}, in which the fact that
+  $(x, y) \in \mathcal{R}$ means that $(y, x)$ is defintely
+  \textbf{not} in $\mathcal{R}$
+\item An \textit{antisymmetric relation}, in which there \textit{may}
+  be instances of both $(x, y) \in \mathcal{R}$ and
+  $(y, x) \in \mathcal{R}$, but if there are, then it means that $x$
+  and $y$ have to be the same object.
+\end{itemize}
+
+
+\subsection{Reflexivity}
+\label{sec:reflexivity}
+
+\subsubsection{Definition}
+
+Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
+
+\paragraph{Reflexive}
+
+$\mathcal{R}$ is \textbf{reflexive} if and only if
+$ \forall x \in S : (x, x) \in \mathcal{R} $.
+
+\paragraph{Coreflexive}
+
+$\mathcal{R}$ is \textbf{coreflexive} if and only if
+$ \forall x, y \in S : (x, y) \in \mathcal{R} \implies x = y$.
+
+\paragraph{Antireflexive}
+
+$\mathcal{R}$ is \textbf{antireflexive} if and only if
+$ \forall x \in S: (x, x) \notin \mathcal{R}$.
+
+\paragraph{Non-reflexive}
+
+$\mathcal{R}$ is \textbf{non-reflexive} if and only if it is neither
+\textit{reflexive} nor \textit{antireflexive}.
+
+
+\subsection{Transitivity}
+\label{sec:transitivity}
+
+\subsubsection{Definition}
+
+Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
+
+\paragraph{Transitive}
+
+$\mathcal{R}$ is \textbf{transitive} if and only if
+$(x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z)
+\in \mathcal{R}$. That is,
+$\{(x, y), (y, z)\} \subseteq \mathcal{R} \implies (x, z) \in
+\mathcal{R}$.
+
+\paragraph{Antitransitive}
+
+$\mathcal{R}$ is \textbf{antitransitive} if and only if
+$ (x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z)
+\notin \mathcal{R}$. That is,
+$ \{ (x, y), (y, z) \} \subseteq \mathcal{R} \implies (x, z) \notin
+\mathcal{R} $.
+
+\paragraph{Non-transitive}
+
+$\mathcal{R}$ is \textbf{non-transitive} if and only if it is neither
+\textit{transitive} nor \textit{antitransitive}.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Soundness}
 
 It is called \textbf{sound} if an analysis for program \textsl{P} says
@@ -57,6 +237,7 @@ by emiting \textbf{alarms}, even though they are actually satisfy
 $ S(P) $. False positives are also called as \textbf{false alarms}.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Completeness}
 
 An analysis is called \textbf{complete} when a program satisfies a
@@ -103,6 +284,7 @@ completeness.
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Semantics of Program}
 \label{sec:semantics}
 
@@ -118,7 +300,7 @@ that is grammatically correct.
     a \to & \mid n & \mid x & \mid a_1 + a_2 \\
           & \mid a_1 \times a_2 & \mid a_1 - a_2 \\
     b \to & \mid \mathtt{true} & \mid \mathtt{false} & \mid a_1 = a_2  \\
-          & \mid a_1 \leq a_2 & \mid \neg b & \mid b_1 \wedge b_2 \\
+          & \mid a_1 \leq a_2 & \mid \neg b & \mid b_1 \land b_2 \\
     c \to & \mid x := a  & \mid \mathtt{skip} & \mid c_1 ; c_2 \\
           & \mid \mathtt{if} \text{ }b \text{ }c_1\text{ }c_2 & \mid \mathtt{while} \text{ }b \text{ }c \\
   \end{array}
@@ -158,7 +340,7 @@ A state $ s \in State $ is a function from variables to values:
     \mathcal{B} \SEM{ a_1 = a_2 } (s) & = & \mathcal{A} \SEM{ a_1 } (s) = \mathcal{A} \SEM{ a_2 } (s) \\
     \mathcal{B} \SEM{ a_1 \leq a_2 } (s) & = & \mathcal{A} \SEM{ a_1 } (s) \leq \mathcal{A} \SEM{ a_2 } (s) \\
     \mathcal{B} \SEM{ \neg b } (s) & = & \mathcal{B} \SEM{ b } (s) = {false} \\
-    \mathcal{B} \SEM{ b_1 \wedge b_2 } (s) & = & \mathcal{B} \SEM{ b_1 } (s) \wedge \mathcal{B} \SEM{ b_2 } (s) \\
+    \mathcal{B} \SEM{ b_1 \land b_2 } (s) & = & \mathcal{B} \SEM{ b_1 } (s) \wedge \mathcal{B} \SEM{ b_2 } (s) \\
   \end{array}
 \end{math}
 
@@ -227,7 +409,7 @@ $\mathcal{A} \SEM{ a[y \mapsto a_0] } (s) = \mathcal{A} \SEM{a} (s [ y
 
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Operational Semantics}
 
 Also called as \textit{transitional} semantics.
@@ -363,6 +545,7 @@ The semantic function $\mathcal{S}_s$ for small-step semantics is:
 \end{math}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Denotational Semantics}
 Also called as \textit{compositional} semantics.
 
