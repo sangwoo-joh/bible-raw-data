@@ -348,6 +348,23 @@ Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
   \end{array}
 \end{math}
 
+\subsubsection{Absorption Law}
+Let $(S, \circ, *)$ be an algebraic structure. Let both $\circ$ and
+$*$ be commutative.
+
+Then $\circ$ \textbf{absorbs} $*$ if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \forall a, b \in S: a \circ (a * b) = a
+  \end{array}
+\end{math}
+
+This equality is called the \textbf{absorption law of $\circ$ for
+  $*$}.
+
+
+
 \subsection{Associativity}
 
 Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
@@ -358,6 +375,34 @@ Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
     \forall x, y, z \in S: (x \circ y) \circ z = x \circ (y \circ z)
   \end{array}
 \end{math}
+
+
+\subsection{Idempotence}
+
+\subsubsection{Idempotent Element}
+Let $(S, \circ)$ be a magma. Let $x \in S$ have the property that
+$ x \circ x = x$.
+
+Then $x \in S $ is described as \textbf{idempotent (element) under the
+  operation $\circ$}.
+
+\subsubsection{Idempotent Operation}
+Let $(S, \circ)$ be a magma.
+
+
+If \textit{all} the elements of $S$ are \textit{idempotent} under
+$\circ$, then the term can be applied to the operation itself. Thus, a
+binary operation $\circ$ is \textbf{idempotent} if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \forall x \in S: x \circ x = x
+  \end{array}
+\end{math}
+
+Examples are: set union, set intersection, ...
+
+
 
 \subsection{Identity}
 Let $(S, \circ)$ be an algebraic structure.
@@ -743,9 +788,92 @@ and only if:
 
 
 \subsection{Semilattice}
+A semigroup $(S, \circ)$ is called a \textbf{semilattice} if and only
+if $\circ$ is a \textit{commutative} and \textit{idempotent}
+operation.
 
-Let
+Thus, an algebraic structure is a \textbf{semilattice} if and only if
+it satisfies the semilattice axioms:
 
+\begin{itemize}
+\item SL0: Closure for $\circ$. $\forall a, b \in S: a \circ b \in S$
+\item SL1: Associativity of $\circ$.
+  $\forall a, b, c \in S: (a \circ b) \circ c = a \circ (b \circ c)$
+\item SL2: Commutativity of $\circ$.
+  $\forall a, b \in S: a \circ b = b \circ a$
+\item SL3: Idempotence of $\circ$. $\forall a \in S: a \circ a = a$
+\end{itemize}
+
+
+\subsubsection{Join Semilattice}
+Let $(S, \vee, \preceq)$ be an ordered structure and $\vee$ is join
+operator.
+
+Suppose that $\forall a, b \in S: a \vee b \in S$ where $a \vee b$ is
+the join of $a$ and $b$ with respect to $\preceq$.
+
+Then the ordered structure $(S, \vee, \preceq)$ is called a
+\textbf{join semilattice}.
+
+
+\subsubsection{Meet Semilattice}
+Let $(S, \wedge, \preceq)$ be an ordered structure and $\wedge$ is meet
+operator.
+
+Suppose that $\forall a, b \in S: a \wedge b \in S$ where $a \wedge b$ is
+the meet of $a$ and $b$ with respect to $\preceq$.
+
+Then the ordered structure $(S, \wedge, \preceq)$ is called a
+\textbf{meet semilattice}.
+
+
+\subsubsection{Semilattice Induces Ordering}
+\label{sec:semilattice-induces-ordering}
+
+Let $(S, \circ)$ be a semlilattice. Let $\preceq$ be the relation on
+$S$ defined by $\forall a, b \in S: a \preceq b \iff a \circ b = b$.
+
+Then $\preceq$ is an ordering.
+
+\paragraph{Proof}
+
+Let's verify that $\preceq$ satisfies the three conditions for an
+ordering.
+
+\subparagraph{Reflexivity}
+
+Since $\circ$ is \textit{idempotent},
+$\forall a \in S: a \circ a = a$. Hence $a \preceq a$. Thus $\preceq$
+is \textit{reflexive}.
+
+\subparagraph{Antisymmetry}
+
+Suppose that $a \preceq b$ and $b \preceq a$.
+
+Then from the first relation: $a \circ b = b$
+
+and from the second: $b \circ a =a$.
+
+Since $\circ$ is \textit{commutative}, it follows that $a = b$. Hence
+$\preceq$ is \textit{antisymmetric}.
+
+\subparagraph{Transitivity}
+
+Suppose that $a \preceq b$ and $b \preceq c$.
+
+Then:
+
+\begin{math}
+  \begin{array}{lcll}
+    a \circ c & = & a \circ (b \circ c) & \because b \preceq c \\
+              & = & (a \circ b) \circ c & \because \circ \text{ is associative} \\
+              & = & b \circ c & \because a \preceq b \\
+              & = & c & \because b \preceq c \\
+    \therefore a \preceq c
+  \end{array}
+\end{math}
+
+Thus, $\preceq$ is \textit{transitive}.
 
 
 \subsection{Lattice}
@@ -770,6 +898,30 @@ only if:
 \item $(S,\wedge, \preceq)$ is a meet semilattice
 \end{itemize}
 
+\subsubsection{Definition 3}
+
+Let $(S, \vee)$ and $(S, \wedge)$ be semilattices on a set $S$.
+
+Suppose that $\vee$ and $\wedge$ satisfy the \textit{absorption laws}, that is,
+
+\begin{itemize}
+\item $\forall a, b \in S: a \vee (a \wedge b) = a$
+\item $\forall a, b \in S: a \wedge (a \vee b) = a$
+\end{itemize}
+
+Let $\preceq$ be the ordering on $S$ defined by:
+
+\begin{math}
+  \begin{array}{c}
+    \forall a, b \in S: a \preceq b \iff a \vee b = b
+  \end{array}
+\end{math}
+
+as on Semilattice Induces
+Ordering\ref{sec:semilattice-induces-ordering}.
+
+Then the ordered structure $(S, \vee, \wedge, \preceq)$ is called a
+\textbf{lattice}.
 
 
 
@@ -785,8 +937,7 @@ $\preceq$. That is,
 
 \begin{math}
   \begin{array}{c}
-    \forall T \subseteq S: \exists a \in T : \forall x \in T : a \preceq
-    x
+    \forall T \subseteq S: \exists a \in T : \forall x \in T : a \preceq x
   \end{array}
 \end{math}
 
