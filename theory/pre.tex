@@ -278,6 +278,226 @@ Also called as \textbf{weakly connected}, while \textit{strictly
   connected} refers to \textit{total relation}.
 
 
+
+\subsection{Algebraic Structure}
+
+An \textbf{algebraic structure} is an ordered tuple:
+
+\begin{math}
+  \begin{array}{c}
+    (S, \circ_1, \circ_2, ..., \circ_n)
+  \end{array}
+\end{math}
+
+where $S$ is a set which has one or more binary operations
+$\circ_1, \circ_2, ..., \circ_n$ defined on all the elements of
+$S \times S$.
+
+An algebraic structure with one (binary) operation is thus an ordered
+pair which can be denoted as $(S, \circ)$ or $(T, *)$ or
+$\pair{S, \circ}$, and so on.
+
+
+\subsubsection{Closure}
+Let $(S, \circ)$ be an algebraic structure. Then $S$ has the property
+of \textbf{closure under $\circ$} if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \forall (x, y) \in S \times S : x \circ y \in S
+  \end{array}
+\end{math}
+
+
+$S$ is said to be \textbf{closed under $\circ$}, or just that
+$(S, \circ)$ \textbf{is closed}.
+
+\subsubsection{Magma}
+
+A \textbf{magma} is an algebraic structure $(S, \circ)$ such that $S$
+is closed unser $\circ$.
+
+That is, a magma is a pair $\pair{S, \circ}$ where:
+
+\begin{itemize}
+\item $S$ is a set
+\item $\circ: S \times S \to S $ is a binary operation on $S$.
+\end{itemize}
+
+
+\subsection{Relation Compatible with Operation}
+
+Let $(S, \circ)$ be a magma. Let $\mathcal{R}$ be a relation on $S$.
+
+Then $\mathcal{R}$ is \textbf{compatible with $\circ$} if and only if:
+
+\begin{itemize}
+\item $\forall x, y, z \in S: x \mathcal{R} y \implies (x \circ z) \mathcal{R} (y \circ z)$
+\item $\forall x, y, z \in S: x \mathcal{R} y \implies (z \circ x) \mathcal{R} (z \circ y)$
+\end{itemize}
+
+
+\subsection{Commutativity}
+
+Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
+\textbf{commutative on $S$} if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \forall x, y \in S: x \circ y = y \circ x
+  \end{array}
+\end{math}
+
+\subsection{Associativity}
+
+Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
+\textbf{associative on $S$} if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \forall x, y, z \in S: (x \circ y) \circ z = x \circ (y \circ z)
+  \end{array}
+\end{math}
+
+\subsection{Identity}
+Let $(S, \circ)$ be an algebraic structure.
+
+
+\subsubsection{Left Identity}
+An element $e_L \in S$ is called a \textbf{left identity} if and only
+if:
+
+\begin{math}
+  \begin{array}{c}
+    \forall x \in S: e_L \circ x = x
+  \end{array}
+\end{math}
+
+\subsubsection{Right Identity}
+An element $e_R \in S$ is called a \textbf{right identity} if and only
+if:
+
+\begin{math}
+  \begin{array}{c}
+    \forall x \in S: x \circ e_R = x
+  \end{array}
+\end{math}
+
+
+\subsubsection{Identity}
+An element $e \in S$ is called an \textbf{identity (element)} if and
+only if it is both a \textit{left identity} and \textit{right
+  identity}
+
+\begin{math}
+  \begin{array}{c}
+    \forall x \in S: e \circ x = x \circ e =  x
+  \end{array}
+\end{math}
+
+
+\paragraph{Identity is Unique}
+
+Suppose $e_1$ and $e_2$ are both identity elements of $(S, \circ)$.
+
+Then by the definition of identity elements:
+
+\begin{math}
+  \begin{array}{c}
+    \forall s \in S: s \circ e_1 = s = e_2 \circ s
+  \end{array}
+\end{math}
+
+Then:
+
+\begin{math}
+  \begin{array}{c}
+    e_1 = e_2 \circ e_1 = e_2 \\
+    \therefore e_1 = e_2
+  \end{array}
+\end{math}
+
+
+
+\subsection{Semigroup}
+
+Let $(S, \circ)$ be a magma. Then this magma is a \textbf{semigroup}
+if and only if $\circ$ is \textit{associative} on $S$.
+
+
+That is, a \textbf{semigroup} is an algebraic structure which is
+\textit{closed} and whos operation is \textit{associative}.
+
+
+\subsection{Monoid}
+
+A \textbf{monoid} is a \textit{semigroup} with an \textit{identity
+  element}.
+
+\paragraph{Monoid is not Empty}
+
+Let $(S, \circ)$ be a monoid. By definition:
+
+\begin{math}
+  \begin{array}{c}
+    \text{Identity: } \exists e_S \in S : \forall a \in S: a \circ e_S = a = e_S \circ a
+  \end{array}
+\end{math}
+
+So a monoid must \textit{at least} have an identity.
+
+Therefore $e_S \in S $ and so $S$ is not the empty set.
+
+
+\subsection{Inverse}
+Let $(S, \circ)$ be a monoid whose identity is $e_S$.
+
+\subsubsection{Left Inverse}
+An element $x_L \in S$ is called a \textbf{left inverse} of $x$ if and
+only if:
+
+\begin{math}
+  \begin{array}{c}
+    x_L \circ x = e_S
+  \end{array}
+\end{math}
+
+
+\subsubsection{Right Inverse}
+An element $x_R \in S$ is called a \textbf{right inverse} of $x$ if and
+only if:
+
+\begin{math}
+  \begin{array}{c}
+    x \circ x_R = e_S
+  \end{array}
+\end{math}
+
+\subsubsection{Inverse}
+Let $x , y \in S $ be elements. The element $y$ is an \textbf{inverse
+  of $x$} if and only if $y$ is both a \textit{left inverse} and
+\textit{right inverse}.
+
+
+\subsection{Group}
+
+A \textbf{group} is a \textit{semigroup} with an \textit{identity}
+(that is, a \textit{monoid}) in which every element has an
+\textit{inverse}.
+
+\begin{itemize}
+\item G0: Closure. $ \forall a, b \in G: a \circ b \in G$
+\item G1: Associativity. $ \forall a, b, c \in G: a \circ (b \circ c) = (a \circ b) \circ c $
+\item G2: Identity. $\exists e in G : \forall a in G: e \circ a = a = a \circ e $
+\item G3: Inverse. $\forall a in G: \exists b in G: a \circ b = e = b \circ a$
+\end{itemize}
+
+
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Ordering}
 \label{sec:ordering}
@@ -342,6 +562,21 @@ In natural language, such terms are called \textbf{comparative
 Depending on the nature of the set being ordered, and depending on the
 nature of the ordering relation, this interpretation of an ordering as
 a comparison of size may not be intellectually sustainable.
+
+
+
+
+\subsection{Ordered Structure}
+
+An \textbf{ordered structure} $(S, \circ, \preceq)$ is a set $S$ such
+that:
+
+\begin{itemize}
+\item $(S, \circ)$ is an algebraic structure
+\item $(S, \preceq)$ is an ordered set
+\item $\preceq$ is compatible with $\circ$
+\end{itemize}
+
 
 \subsection{Upper Bound}
 Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
@@ -507,6 +742,37 @@ and only if:
 \end{math}
 
 
+\subsection{Semilattice}
+
+Let
+
+
+
+\subsection{Lattice}
+
+\subsubsection{Definition 1}
+Let $(S, \preceq)$ be an ordered set. Suppose that $S$ admits all
+finite non-empty suprema and finite non-empty infima. Denote with
+$\wedge$ and $\vee$ the join and meet operations on $S$, respectively.
+
+Then the ordered structure $(S, \wedge, \vee, \preceq)$ is called a
+\textbf{lattice}.
+
+\subsubsection{Definition 2}
+
+Let $(S, \wedge, \vee, \preceq)$ be an ordered structure.
+
+Then $(S, \wedge, \vee, \preceq)$ is called a \textbf{lattice} if and
+only if:
+
+\begin{itemize}
+\item $(S,\vee, \preceq)$ is a join semilattice
+\item $(S,\wedge, \preceq)$ is a meet semilattice
+\end{itemize}
+
+
+
+
 
 \subsection{Well-Ordering}
 
@@ -591,6 +857,7 @@ non-comparable:
 It it is necessary to emphasizes that a partial ordering is
 \textbf{not} strict, then the term \textbf{weak partial ordering} may
 be used.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
