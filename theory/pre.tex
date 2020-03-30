@@ -29,7 +29,7 @@ For program \textsl{P} and property \textsl{S},
 \textbf{No analysis} can be sound and complete at the same time. If an
 analysis is sound, then it is also incomplete, and vice versa.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Relation Theory}
 This note originates from
 Proofwiki\footnote{https://proofwiki.org}.
@@ -207,11 +207,193 @@ $\mathcal{R}$ is \textbf{non-transitive} if and only if it is neither
 \textit{transitive} nor \textit{antitransitive}.
 
 
+\subsection{Total Relation}
+\label{sec:total-relation}
+Let $\mathcal{R} \subseteq S \times S$ be a relation on a set
+$S$. Then $\mathcal{R}$ is defined as \textbf{total} if and only if:
 
+$\forall a, b \in S : (a, b) \in \mathcal{R} \lor (b, a) \in
+\mathcal{R}$
+
+That is, if and only if every pair of elements is related.
+
+
+Also called as \textbf{strictly connected}, or \textbf{complete
+  relation}.
+
+\subsection{Connected Relation}
+\label{sec:connected-relation}
+
+Let $\mathcal{R} \subseteq S \times S$ be a relation on a set
+$S$. Then $\mathcal{R}$ is \textbf{connected} if and only if:
+
+$\forall a, b \in S: a \neq b \implies (a, b) \in \mathcal{R} \lor
+(b,a) \in \mathcal{R}$
+
+That is, if and only if every pair of \textit{distinct} elements is
+related.
+
+
+Also called as \textbf{weakly connected}, while \textit{strictly
+  connected} refers to \textit{total relation}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Ordering}
+\label{sec:ordering}
+
+\paragraph{Definition}
+
+Let $S$ be a set.
+
+An \textbf{ordering on} $S$ is a relation $\mathcal{R}$ on $S$ such
+that:
+
+\begin{itemize}
+\item $\mathcal{R}$ is \textbf{reflexive}, i.e., $\forall a \in S: a \mathcal{R} a$.
+\item $\mathcal{R}$ is \textbf{transitive}, i.e.,
+  $\forall a, b, c \in S: a \mathcal{R} b \land b \mathcal{R} c
+  \implies a \mathcal{R} c$.
+\item $\mathcal{R}$ is \textbf{antisymmetric}, i.e.,
+  $\forall a \in S : a \mathcal{R} b \land b \mathcal{R} a \implies a
+  = b$.
+\end{itemize}
+
+It is not demanded for an ordering $\preceq$, defined in its most
+general form on a set $S$, that \textit{every} pair of elements of $S$
+is related by $\preceq$. They may be, or they may not be, depending on
+the specific nature of both $S$ and $\preceq$.
+
+If it \textit{is} the case that $\preceq$ is a \textbf{connected
+  relation}, that is, that every pair of distinct elements is related
+by $\preceq$, then $\preceq$ is called a \textbf{total ordering}.
+
+If it is \textit{not} the case that $\preceq$ is connected, then
+$\preceq$ is called a \textbf{partial ordering}.
+
+
+\paragraph{Notation}
+
+Symbols used to denote a general \textbf{ordering relation} are
+usually variants on $\preceq$, $\leq$, and so on.
+
+Thus, $a \preceq b$ can be read as:
+\begin{itemize}
+\item $a$ \textbf{precedes, or is the same as} $b$.
+\item $b$ \textbf{succeeds, or is the same as} $a$.
+\end{itemize}
+
+\paragraph{Smaller and Larger}
+
+An \textbf{ordering} can often be considered to be a comparison of the
+\textbf{size} of objects, perhaps in some intuitive sense. This is
+particularly applicable in the context of numbers. Thus the expression
+$A \preceq B$ can in such contexts be interpreted as:
+\begin{itemize}
+\item $A$ is \textbf{smaller than} $B$
+\item $A$ is \textbf{less than} $B$
+\item $B$ is \textbf{larger than} $A$
+\item $B$ is \textbf{greater than} $A$
+\end{itemize}
+
+In natural language, such terms are called \textbf{comparative
+  adjectives}, or just \textbf{comparatives}.
+
+Depending on the nature of the set being ordered, and depending on the
+nature of the ordering relation, this interpretation of an ordering as
+a comparison of size may not be intellectually sustainable.
+
+
+\subsection{Well-Ordering}
+
+Let $(S, \preceq)$ be an ordered set.
+
+The ordering $\preceq$ is a \textbf{well-ordering} on $S$ if and only
+if \textbf{every} non-empty subset of $S$ has a smallest element under
+$\preceq$. That is,
+
+
+\begin{math}
+  \begin{array}{c}
+    \forall T \subseteq S: \exists a \in T : \forall x \in T : a \preceq
+    x
+  \end{array}
+\end{math}
+
+\subsection{Strict Ordering}
+\label{sec:strict-ordering}
+
+Let $\mathcal{R}$ be a relation on a set $S$.
+
+Then $\mathcal{R}$ is a \textbf{strict ordering} on $S$ if and only
+if:
+
+\begin{itemize}
+\item $\mathcal{R}$ is \textit{asymmetric}, i.e.,
+  $\forall a, b \in S : a \mathcal{R} b \implies \neg b \mathcal{R} a$
+\item $\mathcal{R}$ is \textit{transitive}, i.e.,
+  $\forall a, b, c \in S: a \mathcal{R} b \land b \mathcal{R} c
+  \implies a \mathcal{R} c$
+\end{itemize}
+
+Symbols used to denote a general strict ordering are usually variants
+on $\prec$, $<$, and so on.
+
+
+\subsection{Total Ordering}
+
+Let $\mathcal{R} \subseteq S \times S$ be a relation on a set $S$.
+
+$\mathcal{R}$ is a \textbf{total ordering} on $S$ if and only if:
+
+\begin{itemize}
+\item $\mathcal{R}$ is an ordering on $S$
+\item $\mathcal{R}$ is connected
+\end{itemize}
+
+That is, $\mathcal{R}$ is an ordering with no non-comparable pairs:
+
+
+\begin{math}
+  \begin{array}{c}
+    \forall x, y \in S: x \mathcal{R} y \lor y \mathcal{R} x
+  \end{array}
+\end{math}
+
+Also called as a \textbf{linear ordering}, or a \textbf{simple
+  ordering}.
+
+If it is necessary to emphasises that a total ordering is \textbf{not}
+strict, then the term \textbf{weak total ordering} may be used.
+
+
+\subsection{Partial Ordering}
+
+Let $(S, \preceq)$ be an ordered set.
+
+Then the ordering $\preceq$ is a \textbf{partial ordering} on $S$ if
+and only if $\preceq$ is \textbf{not connected}.
+
+That is, if and only if $(S, \preceq)$ has at least one pair which is
+non-comparable:
+
+\begin{math}
+  \begin{array}{c}
+    \exists x, y \in S : x \npreceq y \land y \npreceq x
+  \end{array}
+\end{math}
+
+
+It it is necessary to emphasizes that a partial ordering is
+\textbf{not} strict, then the term \textbf{weak partial ordering} may
+be used.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Soundness}
+\section{Soundness and Completeness}
+
+\subsection{Soundness}
+
 
 It is called \textbf{sound} if an analysis for program \textsl{P} says
 that it satisfies property \textsl{S}, then the program will truly
@@ -236,9 +418,7 @@ other words, it proves that $ p_3 $ and $ p_4 $ satisfy $ \neg S(P) $
 by emiting \textbf{alarms}, even though they are actually satisfy
 $ S(P) $. False positives are also called as \textbf{false alarms}.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Completeness}
+\subsection{Completeness}
 
 An analysis is called \textbf{complete} when a program satisfies a
 property \textsl{S}, the analysis for that program says that it will
