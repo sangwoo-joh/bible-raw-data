@@ -41,6 +41,46 @@ has the same conceptual definition as a (graph-theoretical) graph, it
 follows that there is considerable overlap between the fields of
 relation theory and graph theory.
 
+\subsection{Set Equivalence}
+
+Let $S$ and $T$ be sets. Then $S$ and $T$ are \textbf{equivalent} if
+and only if there exists a \textbf{bijection} $f : S \to T$ between
+the elements of $S$ and those of $T$.
+
+That is, if they have the \textbf{same cardinality}.
+
+This can be written as $S \sim T$.
+
+Other terms that are used that mean the same things as
+\textbf{equivalent} are:
+
+\begin{itemize}
+\item \textbf{Equipotent}, from which we refer to equivalent sets as
+  \textbf{having the same power}
+\item \textbf{Equipollent}
+\item \textbf{Equinumerous}
+\item \textbf{Similar}
+\end{itemize}
+
+\subsection{Finite Set}
+
+A set $S$ is defined as \textbf{finite} if and only if
+
+\begin{math}
+  \begin{array}{c}
+    \exists n \in \mathbb{N}: S \sim \mathbb{N}_{< n}
+  \end{array}
+\end{math}
+
+where $\sim$ denotes \textit{set equivalence}.
+
+That is, if there exists an element $n$ of the set of natural numbers
+$\mathbb{N}$ such that the set of all elements of $\mathbb{N}$ less
+than $n$ is equivalent to $S$.
+
+Equivalently, a finite set is a set with a count.
+
+
 
 \subsection{Relation}
 \subsubsection{Definition}
@@ -302,6 +342,170 @@ In natural language, such terms are called \textbf{comparative
 Depending on the nature of the set being ordered, and depending on the
 nature of the ordering relation, this interpretation of an ordering as
 a comparison of size may not be intellectually sustainable.
+
+\subsection{Upper Bound}
+Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
+
+An \textbf{upper bound for $T$ in $S$} is an element $M \in S$ such
+that:
+
+\begin{math}
+  \begin{array}{c}
+    \forall t \in T : t \preceq M
+  \end{array}
+\end{math}
+
+That is, $M$ \textit{succeeds} every elements of $T$.
+
+
+
+\subsection{Supremum}
+
+Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
+
+An element $c \in S$ is the \textbf{supremum of $T$ in $S$} if and
+only if:
+
+\begin{itemize}
+\item $c$ is an \textit{upper bound} of $T$ in $S$
+\item $c \preceq d$ for all upper bounds $d$ of $T$ in $S$
+\end{itemize}
+
+If there exists a \textbf{supremum} of $T$, we say that:
+
+\begin{itemize}
+\item $T$ admits a supremum (in $S$)
+\item $T$ has a supremum (in $S$)
+\end{itemize}
+
+
+Particularly in the field of analysis, the supremum of a set $T$ is
+often referred to as the \textbf{least upper bound of $T$} and denoted
+$\mathtt{lub}(T)$.
+
+
+\subsubsection{Supremum is Unique}
+
+$T$ has at most one supremum in $S$.
+
+\paragraph{Proof}
+
+Let $c$ and $c'$ both be suprema of $T$ in $S$. From the definition of
+supremum, $c$ and $c'$ are upper bounds of $T$ in $S$.
+
+By that definition:
+
+\begin{itemize}
+\item $c$ is an upper bound of $T$ in $S$, and $c'$ is a supremum of $T$ in $S$ implies that $c' \preceq c$.
+\item $c'$ is an upper bound of $T$ in $S$, and $c$ is supremum of $T$ in $S$ implies that $c preceq c'$.
+\end{itemize}
+
+
+So
+
+\begin{math}
+  \begin{array}{c}
+    c' \preceq c \land c \preceq c'
+  \end{array}
+\end{math}
+
+and thus by the antisymmetry of the ordering $\preceq$:
+
+\begin{math}
+  \begin{array}{c}
+    c = c' \\
+  \end{array}
+\end{math}
+
+Q.E.D.
+
+
+\subsection{Join}
+Let $(S, \preceq)$ be an ordered set. Let $a, b \in S$. Let their
+supremum $\mathtt{sup} \{a, b\}$ exist in $S$.
+
+Then the \textbf{join of $a$ and $b$}\footnote{some sources refer to
+  this as the \textbf{union} of $a$ and $b$} is defined as:
+
+\begin{math}
+  \begin{array}{c}
+    a \vee b = \mathtt{sub} \{ a, b \}
+  \end{array}
+\end{math}
+
+Expanding the definition of supremum, one sees that $c = a \vee b$ if
+and only if:
+
+\begin{math}
+  \begin{array}{c}
+    a \preceq c\text{ and }b \preceq c\text{ and }\forall s \in S: a \preceq s \land b \preceq s \implies c \preceq s
+  \end{array}
+\end{math}
+
+
+
+\subsection{Lower Bound}
+Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
+
+A \textbf{lower bound for $T$ in $S$} is an element $m \in S$ such that:
+
+\begin{math}
+  \begin{array}{c}
+    \forall t \in T: m \preceq t
+  \end{array}
+\end{math}
+
+That is, $m$ \textit{precedes} every elements of $T$.
+
+
+\subsection{Infimum}
+Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
+
+
+An element $c \in S$ is the \textbf{infimum of $T$ in $S$} if and only
+if:
+
+\begin{itemize}
+\item $c$ is a \textit{lower bound} of $T$ in $S$
+\item $d \preceq c$ for all lower bounds $d$ of $T$ in $S$
+\end{itemize}
+
+If there exists an \textbf{infimum} of $T$, we say that:
+
+\begin{itemize}
+\item $T$ admits an infimum (in $S$)
+\item $T$ has an infimum (in $S$)
+\end{itemize}
+
+
+Particularly in the field of analysis, the infimum of a set $T$ is
+often referred to as the \textbf{greatest lower bound of $T$} and
+denoted as $\mathtt{glb}(T)$.
+
+
+\subsection{Meet}
+Let $(S, \preceq)$ be an ordered set. Let $a, b \in S$. Let their
+infimum $\mathtt{inf} \{a, b\}$ exist in $S$.
+
+Then the \textbf{meet of $a$ and $b$}\footnote{some sources refer to
+  this as the \textbf{intersection} of $a$ and $b$} is defined as:
+
+\begin{math}
+  \begin{array}{c}
+    a \wedge b =\mathtt{inf} \{ a, b \}
+  \end{array}
+\end{math}
+
+
+Expanding the definition of infimum, one sees that $c = a \wedge b$ if
+and only if:
+
+\begin{math}
+  \begin{array}{c}
+    c \preceq c\text{ and }c \preceq b\text{ and } \forall s \in S: s \preceq a \land s \preceq b \implies s \preceq c
+  \end{array}
+\end{math}
+
 
 
 \subsection{Well-Ordering}
