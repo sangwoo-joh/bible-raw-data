@@ -436,18 +436,45 @@ Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
 \subsubsection{Symmetric}
 
 $\mathcal{R}$ is \textbf{symmetric} if and only if
-$(x, y) \in \mathcal{R} \implies (y, x) \in \mathcal{R}$.
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    (x, y) \in \mathcal{R} \implies (y, x) \in \mathcal{R}\\
+    \\
+  \end{array}
+\end{math}
+
 
 \subsubsection{Asymmetric}
 
 $\mathcal{R}$ is \textbf{asymmetric} if and only if
-$(x, y) \in \mathcal{R} \implies (y, x) \notin \mathcal{R}$.
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    (x, y) \in \mathcal{R} \implies (y, x) \notin \mathcal{R}\\
+    \\
+  \end{array}
+\end{math}
+
 
 \subsubsection{Antisymmetric}
 
 $\mathcal{R}$ is \textbf{antisymmetric} if and only if
-$ (x,y) \in \mathcal{R} \land (y, x) \in \mathcal{R} \implies x = y $.
-That is, $\{(x, y), (y, x) \} \subseteq \mathcal{R} \implies x = y $.
+
+\begin{math}
+  \begin{array}{ll}
+    \\
+    &(x,y) \in \mathcal{R} \land (y, x) \in \mathcal{R} \implies x = y\\
+    \text{i.e., } & \{(x, y), (y, x) \} \subseteq \mathcal{R} \implies x = y \\
+    \\
+  \end{array}
+\end{math}
+
+
+Antisymettry eliminates uncertain cases when both $a$ precedes $b$ and
+$b$ precedes $a$.
 
 \subsubsection{Non-symmetric}
 
@@ -478,17 +505,44 @@ Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
 \subsubsection{Reflexive}
 
 $\mathcal{R}$ is \textbf{reflexive} if and only if
-$ \forall x \in S : (x, x) \in \mathcal{R} $.
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x \in S : (x, x) \in \mathcal{R} \\
+    \\
+  \end{array}
+\end{math}
+
+
 
 \subsubsection{Coreflexive}
 
 $\mathcal{R}$ is \textbf{coreflexive} if and only if
-$ \forall x, y \in S : (x, y) \in \mathcal{R} \implies x = y$.
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x, y \in S : (x, y) \in \mathcal{R} \implies x = y\\
+    \\
+  \end{array}
+\end{math}
+
+
 
 \subsubsection{Antireflexive}
 
 $\mathcal{R}$ is \textbf{antireflexive} if and only if
-$ \forall x \in S: (x, x) \notin \mathcal{R}$.
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x \in S: (x, x) \notin \mathcal{R}\\
+    \\
+  \end{array}
+\end{math}
+
+
 
 \subsubsection{Non-reflexive}
 
@@ -506,18 +560,31 @@ Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
 \subsubsection{Transitive}
 
 $\mathcal{R}$ is \textbf{transitive} if and only if
-$(x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z)
-\in \mathcal{R}$. That is,
-$\{(x, y), (y, z)\} \subseteq \mathcal{R} \implies (x, z) \in
-\mathcal{R}$.
+
+\begin{math}
+  \begin{array}{ll}
+    \\
+    & (x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z) \in \mathcal{R}\\
+    \text{i.e., } & \{(x, y), (y, z)\} \subseteq \mathcal{R} \implies (x, z) \in \mathcal{R} \\
+    \\
+  \end{array}
+\end{math}
+
 
 \subsubsection{Antitransitive}
 
 $\mathcal{R}$ is \textbf{antitransitive} if and only if
-$ (x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z)
-\notin \mathcal{R}$. That is,
-$ \{ (x, y), (y, z) \} \subseteq \mathcal{R} \implies (x, z) \notin
-\mathcal{R} $.
+
+\begin{math}
+  \begin{array}{ll}
+    \\
+    & (x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z) \notin \mathcal{R}\\
+    \text{i.e., }& \{ (x, y), (y, z) \} \subseteq \mathcal{R} \implies (x, z) \notin \mathcal{R}\\
+    \\
+  \end{array}
+\end{math}
+
+
 
 \subsubsection{Non-transitive}
 
@@ -562,6 +629,12 @@ $S$. Then $\mathcal{R}$ is \textbf{connected} if and only if:
 That is, if and only if every pair of \textit{distinct} elements is
 related.
 
+
+A relation having the \textbf{connexivity} means that any pair of
+elements in the set of the relation are comparable under the
+relation. This also means that the set can be diagrammed as a line of
+elements, giving it the name \textit{linear}. The connexivity also
+implies reflexivity, i.e., $a \leq a$.
 
 Also called as \textbf{weakly connected}, while \textit{strictly
   connected} refers to \textit{total
@@ -1666,8 +1739,8 @@ That is, $\mathcal{R}$ is an ordering with no non-comparable pairs:
 Also called as a \textbf{linear ordering}, or a \textbf{simple
   ordering}.
 
-If it is necessary to emphasises that a total ordering is \textbf{not}
-strict, then the term \textbf{weak total ordering} may be used.
+If it is necessary to emphasises that a total ordering is \textbf{not
+  strict}, then the term \textbf{weak total ordering} may be used.
 
 \subsubsection{Chain}
 \label{sec:chain}
@@ -1797,6 +1870,81 @@ Every \textit{order-preserving}\ref{sec:monotone}
 least fixpoint. If $f$ is continuous, then this fixpoint is equal to
 the supremum of the iterates $(\bot, f(\bot), f(f(\bot)), ...)$ of
 $\bot$.
+
+
+\subsection{Linear Extension}
+\label{sec:linear-extension}
+
+Given any partial orders $\preceq$ and $\preceq^*$ on a set $X$,
+$\preceq^*$ is a \textbf{linear extension of $\preceq$} if and only if:
+
+\begin{itemize}
+\item $\preceq^*$ is a \textit{total order}\ref{sec:total-ordering}
+\item $\forall x, y in X: x \preceq y \implies x \preceq^* y$
+\end{itemize}
+
+It is that second property that leads to describe $\preceq^*$ as
+\textbf{extending} $\preceq$.
+
+
+\subsection{Weak Topological Ordering}
+\label{sec:wto}
+
+\footnote{This origiates from https://en.wikipedia.org/wiki/Topological\_sorting}
+
+A \textbf{topological sort}, or \textbf{(weak) topological ordering}
+of a directed graph is a \textbf{linear
+  ordering}\ref{sec:total-ordering} of its vertices such that for
+every directed edge $uv$ from $u$ to $v$, $u$ comes before $v$ in the
+ordering.
+
+For example, the vertices may represent \textit{tasks} to be
+performed, and the edges may represent \textit{constrains} that one
+task must be performed before another; in this application, a
+\textit{topological ordering} is just a \textbf{valid sequence} for
+the tasks.
+
+A topological ordering is possible if and only if the graph has
+\textbf{no directed cycles}, that is, if it is a directed acyclic
+graph (DAG). Any DAG has at least one topological ordering, and
+algorithms are known for constructing a topological ordering of any
+DAG in linear time.
+
+Topological orderings are closely related to the concept of a
+\textit{linear extension}\ref{sec:linear-extension} of a
+\textit{partial order}\ref{sec:partial-ordering}.
+
+A partially ordered set is just a set of objects together with a
+definition of $\preceq$ inequality relation, satisfying the axioms of
+reflexivity, antisymmetry, and transitivity. A total order is a
+partial order with connexivity. Total orders are familiar in computer
+science as the comparison operators needed to perform comparison
+sorting algorithms. For finite sets, total orders may be identified
+with linear sequences of objects, where $\preceq$ relation is
+\texttt{true} whenever the first object precedes the second object in
+the order; a comparison sorting algorithm may be used to convert a
+total order into a sequence in this way. A linear extension of a
+partial order is a total order that is compatible with if
+$x \preceq y$ in the partial order, then $x \preceq y$ in the total
+order as well.
+
+
+One can define a partial ordering from any DAG by letting the set of
+objects be the vertices of the DAG, and defining $x \preceq y$ to be
+true for any two vertices $x$ and $y$ whenever there exists a directed
+path from $x \to y$; that is, whenever $y$ is \textit{reachable} from
+$x$. With these definitions, a topological ordering of the DAG is the
+same thing as a \textbf{linear extension of this partial
+  order}. Conversely, any partial ordering on a finite set may be
+defined as the \textit{reachability relation} in a DAG. One way of
+doing this is to define a DAG that has a vertex for every object in
+the partially ordered set, and an edge $xy$ for every pair of objects
+for which $x \preceq y$. An alternative way of doing this is to use
+\textit{transitive reduction} of the partial ordering; in general,
+this produces DAGs with fewer edges, but the reachability relation in
+these DAGs is still the same partial order. By using these
+constructions, one can use topological ordering algorithms to find
+linear extensions of partial orders.
 
 
 
