@@ -905,6 +905,10 @@ A \textbf{group} is a \textit{semigroup} with an \textit{identity}
 \item G3: Inverse. $\forall a in G: \exists b in G: a \circ b = e = b \circ a$
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Set Theory}
+\label{sec:set-theory}
 
 \subsection{Set Equivalence}
 \label{sec:set-eq}
@@ -936,8 +940,112 @@ than $n$ is equivalent to $S$.
 
 Equivalently, a finite set is a set with a count.
 
+\subsection{Topology}
+\label{sec:topology}
+
+Let $S$ be a set such that $S \neq \emptyset$. A \textbf{topology on
+  $S$} is a subset $\tau \subseteq \mathcal{P}(S)$ of the power set of
+$S$ that satisfies the open set axioms:
+\begin{itemize}
+\item O1: The union of an arbitrary subset of $\tau$ is an element of
+$\tau$
+\item O2: The intersection of any two elements of $\tau$ is an element
+of $\tau$
+\item O3: $S$ is an element of $\tau$
+\end{itemize}
+
+If $\tau$ is a topology on $S$, then $(S, \tau)$ is called a
+\textit{topological space}. The elements of $\tau$ are called the open
+sets of $(S, \tau)$.
+
+\subsection{Open Set}
+\label{sec:open-set}
+
+Let $T = (S, \tau)$ be a topological space. Then the elements of
+$\tau$ are called the \textbf{open sets of $T$}. Thus, both are
+equivalent statements:
+
+\begin{math}
+  \begin{array}{l}
+    \\
+    U \in \tau \\
+    U \text{ is open in } T\\
+    \\
+  \end{array}
+\end{math}
 
 
+\paragraph{Open Set Axioms}
+\label{sec:open-set-axioms}
+
+Let $S$ be a set. The \textbf{open set axioms} are the conditions
+under which elements of a subset $\tau \in \mathcal{P}(S)$ of the
+power set of $S$ need to satisfy in order to be open sets of the
+topology $\tau$ on $S$:
+
+\begin{itemize}
+\item O1: The union of an arbitrary subset of $\tau$ is an element of
+$\tau$
+\item O2: The intersection of any two elements of $\tau$ is an element
+of $\tau$
+\item O3: $S$ is an element of $\tau$
+\end{itemize}
+
+
+
+\subsection{Closed Set}
+\label{sec:closed-set}
+
+Let $T = (S, \tau)$ be a topological space. Let $H \subseteq S$. H is
+\textbf{closed (in $T$)} if and only if its complements
+$S \setminus H$ is open in $T$.
+
+That is, $H$ is closed if and only if $(S \setminus H) \in \tau$,
+i.e., $S \setminus H$ is an element of the topology of $T$.
+
+
+\paragraph{Closed Set Axioms}
+
+Let $S$ be a set. The \textbf{closed set axioms} are the conditions
+under which a subset $F \subseteq \mathcal{P}(S)$ of the power set $S$
+consists of the closed sets of a topology on $S$:
+
+\begin{itemize}
+\item C1: The intersection of an arbitrary subset of $F$ is an element
+  of $F$
+\item C2: The union of any two elements of $F$ is an element of $F$
+\item C3: $\emptyset$ is an element of $F$
+\end{itemize}
+
+
+
+\subsection{Upper Set}
+\label{sec:upper-set}
+
+Let $(S, \preceq)$ be an ordered set, and $U \subseteq S$. $U$ is an
+\textbf{upper set} in $S$ if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall u \in U : \forall s \in S: u \preceq s \implies s \in U\\
+    \\
+  \end{array}
+\end{math}
+
+\subsection{Lower Set}
+\label{sec:lower-set}
+
+Let $(S, \preceq)$ be an ordered set, and $L \subseteq S$. $U$ is an
+\textbf{lower set} in $S$ if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall l \in L : \forall s \in S: s \preceq l \implies s \in L\\
+    \\
+  \end{array}
+\end{math}
 
 
 
