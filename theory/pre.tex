@@ -30,97 +30,67 @@ For program \textsl{P} and property \textsl{S},
 analysis is sound, then it is also incomplete, and vice versa.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \section{Relation Theory}
 This note originates from
 Proofwiki\footnote{https://proofwiki.org}.
 
-
-\textbf{Relation theory} is the subfield of set theory concerned with
-the properties of relations and relational structures. As a relation
-has the same conceptual definition as a (graph-theoretical) graph, it
-follows that there is considerable overlap between the fields of
-relation theory and graph theory.
-
-\subsection{Set Equivalence}
-\label{sec:set-eq}
-
-Let $S$ and $T$ be sets. Then $S$ and $T$ are \textbf{equivalent} if
-and only if there exists a \textbf{bijection} $f : S \to T$ between
-the elements of $S$ and those of $T$.
-
-That is, if they have the \textbf{same cardinality}.
-
-This can be written as $S \sim T$.
-
-Other terms that are used that mean the same things as
-\textbf{equivalent} are:
-
-\begin{itemize}
-\item \textbf{Equipotent}, from which we refer to equivalent sets as
-  \textbf{having the same power}
-\item \textbf{Equipollent}
-\item \textbf{Equinumerous}
-\item \textbf{Similar}
-\end{itemize}
-
-\subsection{Finite Set}
-\label{sec:finite-set}
-
-A set $S$ is defined as \textbf{finite} if and only if
-
-\begin{math}
-  \begin{array}{c}
-    \exists n \in \mathbb{N}: S \sim \mathbb{N}_{< n}
-  \end{array}
-\end{math}
-
-where $\sim$ denotes \textit{set equivalence}.
-
-That is, if there exists an element $n$ of the set of natural numbers
-$\mathbb{N}$ such that the set of all elements of $\mathbb{N}$ less
-than $n$ is equivalent to $S$.
-
-Equivalently, a finite set is a set with a count.
-
-
-
 \subsection{Relation}
-\subsubsection{Definition}
-Let $S \times T$ be the Cartesian product of two sets $S$ and $T$.
 
-A \textbf{relation} on $S \times T$ is an ordered triple
-$ \mathcal{R} = (S, T, R) $ where $R \subseteq S \times T$ is a
-subset of the Cartesian product of $S$ and $T$.
+Let $S \times T$ be the Cartesian product of two sets $S$ and $T$.A
+\textbf{relation} on $S \times T$ is an ordered triple
+$ \mathcal{R} = (S, T, R) $ where $R \subseteq S \times T$ is a subset
+of the Cartesian product of $S$ and $T$.
 
 What this means is that a \textbf{relation} \textit{relates} (certain)
 elements of one set or class $S$ with (certain) elements of another,
 $T$. Not all elements of $S$ need to be related to every (or even any)
 element of $T$.
 
-\subsubsection{Notation}
+\paragraph{Notation}
 
 If $(x, y)$ is an ordered pair such that $(x, y) \in \mathcal{R}$, we
 use the notation: $ s \mathcal{R} t$ or $ \mathcal{R}(s, t)$ and can
 say:
 \begin{itemize}
-\item $s$ bears $\mathcal{R}$ to $t$
-\item $s$ stands in the relation $\mathcal{R}$ to $t$
+\item $s$ \textbf{bears} $\mathcal{R}$ to $t$
+\item $s$ \textbf{stands in} the relation $\mathcal{R}$ to $t$
 \end{itemize}
 
-\subsubsection{General Definition}
+\paragraph{General Definition}
+
 Let
-$\mathbb{S} = \Pi^n_{i=1}S_i = S_1 \times S_2 \times ... \times S_n $
+$\mathbb{S} = \displaystyle \prod_{i=1}^n S_i = S_1 \times S_2 \times ... \times S_n $
 be the Cartesian product on $n$ sets $S_1, ..., S_n$.
 
 An \textbf{$n$-ary relation on} $\mathbb{S}$ is an ordered
 $n+1$-tuple $\mathcal{R}$ defined as
-$\mathcal{R} := (S_1, S_2, ..., S_n, R)$, where $R$ is an arbitrary
-subset $R \subseteq \mathbb{S}$.
 
-To indicate that $(s_1, s_2, ..., s_n) \in R$, we
-write: $\mathcal{R}(s_1, s_2, ..., s_n)$
+\begin{math}
+  \begin{array}{c}
+    \\
+    \mathcal{R} := (S_1, S_2, ..., S_n, R)\\
+    \\
+  \end{array}
+\end{math}
 
-\subsubsection{Domain}
+where $\mathcal{R}$ is an arbitrary subset
+$\mathcal{R} \subseteq \mathbb{S}$.
+
+To indicate that $(s_1, s_2, ..., s_n) \in R$, we write:
+$\mathcal{R}(s_1, s_2, ..., s_n)$
+
+
+\paragraph{Unary Relation}
+
+As a special case of an $n$-ary relation on $S$, note that when $n=1$
+we define a \textbf{unary relation} on $S$ as
+$\mathcal{R} \subseteq S$. That is, a \textbf{unary relation} is a
+subset of $S$.
+
+
+
+\subsection{Domain}
 \label{sec:domain}
 
 Let $\mathcal{R} \subseteq S \times T$ be a relation. The
@@ -163,14 +133,14 @@ endorelation on $S$:
 \end{math}
 
 
-\subsubsection{Codomain}
+\subsection{Codomain}
 \label{sec:codomain}
 
 The \textbf{codomain} of a relation $\mathcal{R} \subseteq S \times T$
 is the set $T$. It can be denoted as $\mathtt{Cdm}(\mathcal{R})$.
 
 
-\subsubsection{Image}
+\subsection{Image}
 \label{sec:image}
 
 Let $\mathcal{R} \subseteq S \times T$ be a relation. The
@@ -213,13 +183,7 @@ endorelation on $S$:
 \end{math}
 
 
-\subsubsection{Unary Relation}
-As a special case of an $n$-ary relation on $S$, note that when $n=1$
-we define a \textbf{unary relation} on $S$ as
-$\mathcal{R} \subseteq S$. That is, a \textbf{unary relation} is a
-subset of $S$.
-
-\subsubsection{Endorelation}
+\subsection{Endorelation}
 \label{sec:endorelation}
 Let $S \times S$ be the Cartesian product of a set or class $S$ with
 itself. Let $\mathcal{R}$ be a \textbf{relation} on $S \times S$. Then
@@ -240,7 +204,7 @@ Some sources use the term \textbf{binary relation} exclusively to
 refer to a \textbf{binary endorelation}.
 
 
-\subsubsection{Many-to-One Relation}
+\subsection{Many-to-One Relation}
 \label{sec:many-to-one}
 
 A relation $\mathcal{R} \subseteq S \times T$ is \textbf{many-to-one}
@@ -257,7 +221,7 @@ if and only if:
 That is, every element of the domain of $\mathcal{R}$ relates to no
 more than one element of its codomain.
 
-\subsubsection{One-to-Many Relation}
+\subsection{One-to-Many Relation}
 \label{sec:one-to-many}
 
 A relation $\mathcal{R} \subseteq S \times T$ is \textbf{one-to-many}
@@ -279,9 +243,7 @@ the elements in the \textit{image}, not the
 
 Also called as \textit{injective relation}\ref{sec:injection}.
 
-
-
-\subsubsection{One-to-One Relation}
+\subsection{One-to-One Relation}
 \label{sec:one-to-one}
 
 A relation $\mathcal{R} \subseteq S \times T$ is \textbf{one-to-one}
@@ -291,8 +253,7 @@ codomain, and every element of the image is related to by exactly one
 element of its domain.
 
 
-
-\subsubsection{Left-Total Relation}
+\subsection{Left-Total Relation}
 \label{sec:left-total}
 
 Let $S$ and $T$ be sets, and $\mathcal{R} \subseteq S \times T$ be a
@@ -310,7 +271,8 @@ and only if:
 That is, if and only if every element of $S$ relates to some element
 of $T$, i.e., the domain of $\mathcal{R}$ equals to $S$.
 
-\subsubsection{Right-Total Relation}
+
+\subsection{Right-Total Relation}
 \label{sec:right-total}
 
 Let $S$ and $T$ be sets, and $\mathcal{R} \subseteq S \times T$ be a
@@ -329,22 +291,19 @@ That is, if and only if every element of $T$ relates to by some
 element of $S$, i.e., the image of $\mathcal{R}$ equals to $T$.
 
 
-
-
-
 \subsection{Mapping}
 \label{sec:mapping}
 
 Let $S$ and $T$ be sets, and $S \times T$ be their Cartesian product.
 
 
-\subsubsection{Definition 1}
+\paragraph{Definition 1}
 
 A \textbf{mapping} from $S$ to $T$ is a binary relation on
 $S \times T$ which associates each element of $S$ with exactly one
 element of $T$.
 
-\subsubsection{Definition 2}
+\paragraph{Definition 2}
 
 A \textbf{mapping $f$ from $S$ to $T$}, denoted $f: S \to T$, is a
 relation $f = (S, T, G)$ where $G \subseteq S \times T$ such that:
@@ -359,7 +318,7 @@ relation $f = (S, T, G)$ where $G \subseteq S \times T$ such that:
   \end{array}
 \end{math}
 
-\subsubsection{Definition 3}
+\paragraph{Definition 3}
 
 A \textbf{mapping $f$ from $S$ to $T$}, denoted $f: S \to T$, is a
 relation $f = (S, T, R)$ where $R \subseteq S \times T$ such that:
@@ -374,7 +333,7 @@ relation $f = (S, T, R)$ where $R \subseteq S \times T$ such that:
   \end{array}
 \end{math}
 
-\subsubsection{Definition 4}
+\paragraph{Definition 4}
 
 A \textbf{mapping from $S$ to $T$} is a relation on $S \times T$ which is:
 
@@ -383,13 +342,13 @@ A \textbf{mapping from $S$ to $T$} is a relation on $S \times T$ which is:
 \item Left-total, that is, defined for all elements in $S$
 \end{itemize}
 
-\subsubsection{Self-Map}
+\paragraph{Self-Map}
 \label{sec:self-map}
 
 Let $S$ be a set. A \textbf{self-map on $S$} is a \textbf{mapping}
 from $S$ to itself: $f: S \to S$.
 
-\subsubsection{Defined}
+\paragraph{Defined}
 \label{sec:defined}
 
 A mapping $f \subseteq S \times T$ is \textbf{defined} at $x \in S$ if
@@ -417,7 +376,7 @@ then $f$ is \textbf{not defined} or \textbf{undefined} at $x$, and
 indeed, $f$ is not technically a mapping at all.
 
 
-\subsubsection{Injection}
+\subsection{Injection}
 \label{sec:injection}
 
 A mapping $f$ is an \textbf{injection} or \textbf{injective} if and
@@ -434,7 +393,7 @@ only if:
 That is, an injection is a mapping such that the output
 \textit{uniquely determines} its input.
 
-\subsubsection{Surjection}
+\subsection{Surjection}
 \label{sec:surjection}
 
 Let $S$ and $T$ be sets and $f : S \to T$ be a mapping from $S$ to
@@ -454,7 +413,7 @@ Also called as \textbf{onto mapping}, or just \textbf{onto}\footnote{A
   mapping which is not surjective is hence described as \textbf{into}}.
 
 
-\subsubsection{Bijection}
+\subsection{Bijection}
 \label{sec:bijection}
 
 A mapping $f: S \to T$ is a \textbf{bijection} if and only if both
@@ -470,34 +429,32 @@ A mapping $f: S \to T$ is a \textbf{bijection} if and only if both
 The word \textit{symmetry} comes from Greek symmetria meaning
 \textbf{measure together}.
 
-\subsubsection{Definition}
+\paragraph{Definition}
 
 Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
 
-
-
-\paragraph{Symmetric}
+\subsubsection{Symmetric}
 
 $\mathcal{R}$ is \textbf{symmetric} if and only if
 $(x, y) \in \mathcal{R} \implies (y, x) \in \mathcal{R}$.
 
-\paragraph{Asymmetric}
+\subsubsection{Asymmetric}
 
 $\mathcal{R}$ is \textbf{asymmetric} if and only if
 $(x, y) \in \mathcal{R} \implies (y, x) \notin \mathcal{R}$.
 
-\paragraph{Antisymmetric}
+\subsubsection{Antisymmetric}
 
 $\mathcal{R}$ is \textbf{antisymmetric} if and only if
 $ (x,y) \in \mathcal{R} \land (y, x) \in \mathcal{R} \implies x = y $.
 That is, $\{(x, y), (y, x) \} \subseteq \mathcal{R} \implies x = y $.
 
-\paragraph{Non-symmetric}
+\subsubsection{Non-symmetric}
 
 $\mathcal{R}$ is \textbf{non-symmetric} if and only if it is neither
 \textit{symmetric} nor \textit{asymmetric}.
 
-\subsubsection{Antisymmetric and Asymmetric}
+\paragraph{Antisymmetric and Asymmetric}
 
 Note the difference between:
 \begin{itemize}
@@ -514,26 +471,26 @@ Note the difference between:
 \subsection{Reflexivity}
 \label{sec:reflexivity}
 
-\subsubsection{Definition}
+\paragraph{Definition}
 
 Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
 
-\paragraph{Reflexive}
+\subsubsection{Reflexive}
 
 $\mathcal{R}$ is \textbf{reflexive} if and only if
 $ \forall x \in S : (x, x) \in \mathcal{R} $.
 
-\paragraph{Coreflexive}
+\subsubsection{Coreflexive}
 
 $\mathcal{R}$ is \textbf{coreflexive} if and only if
 $ \forall x, y \in S : (x, y) \in \mathcal{R} \implies x = y$.
 
-\paragraph{Antireflexive}
+\subsubsection{Antireflexive}
 
 $\mathcal{R}$ is \textbf{antireflexive} if and only if
 $ \forall x \in S: (x, x) \notin \mathcal{R}$.
 
-\paragraph{Non-reflexive}
+\subsubsection{Non-reflexive}
 
 $\mathcal{R}$ is \textbf{non-reflexive} if and only if it is neither
 \textit{reflexive} nor \textit{antireflexive}.
@@ -542,11 +499,11 @@ $\mathcal{R}$ is \textbf{non-reflexive} if and only if it is neither
 \subsection{Transitivity}
 \label{sec:transitivity}
 
-\subsubsection{Definition}
+\paragraph{Definition}
 
 Let $\mathcal{R} \subseteq S \times S$ be a relation in $S$.
 
-\paragraph{Transitive}
+\subsubsection{Transitive}
 
 $\mathcal{R}$ is \textbf{transitive} if and only if
 $(x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z)
@@ -554,7 +511,7 @@ $(x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z)
 $\{(x, y), (y, z)\} \subseteq \mathcal{R} \implies (x, z) \in
 \mathcal{R}$.
 
-\paragraph{Antitransitive}
+\subsubsection{Antitransitive}
 
 $\mathcal{R}$ is \textbf{antitransitive} if and only if
 $ (x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z)
@@ -562,7 +519,7 @@ $ (x, y) \in \mathcal{R} \land (y, z) \in \mathcal{R} \implies (x, z)
 $ \{ (x, y), (y, z) \} \subseteq \mathcal{R} \implies (x, z) \notin
 \mathcal{R} $.
 
-\paragraph{Non-transitive}
+\subsubsection{Non-transitive}
 
 $\mathcal{R}$ is \textbf{non-transitive} if and only if it is neither
 \textit{transitive} nor \textit{antitransitive}.
@@ -570,11 +527,13 @@ $\mathcal{R}$ is \textbf{non-transitive} if and only if it is neither
 
 \subsection{Total Relation}
 \label{sec:total-relation}
+
 Let $\mathcal{R} \subseteq S \times S$ be a relation on a set
 $S$. Then $\mathcal{R}$ is defined as \textbf{total} if and only if:
 
 \begin{math}
   \begin{array}{c}
+    \\
     \forall a, b \in S : (a, b) \in \mathcal{R} \lor (b, a) \in \mathcal{R} \\
     \\
   \end{array}
@@ -593,6 +552,7 @@ $S$. Then $\mathcal{R}$ is \textbf{connected} if and only if:
 
 \begin{math}
   \begin{array}{c}
+    \\
     \forall a, b \in S: a \neq b \implies (a, b) \in \mathcal{R} \lor (b,a) \in \mathcal{R} \\
     \\
   \end{array}
@@ -607,6 +567,57 @@ Also called as \textbf{weakly connected}, while \textit{strictly
   connected} refers to \textit{total
   relation}\ref{sec:total-relation}.
 
+
+\subsection{Relation Compatible with Operation}
+\label{sec:compatibility}
+
+Let $(S, \circ)$ be a magma. Let $\mathcal{R}$ be a relation on $S$.
+
+Then $\mathcal{R}$ is \textbf{compatible with $\circ$} if and only if:
+
+\begin{itemize}
+\item $\forall x, y, z \in S: x \mathcal{R} y \implies (x \circ z) \mathcal{R} (y \circ z)$
+\item $\forall x, y, z \in S: x \mathcal{R} y \implies (z \circ x) \mathcal{R} (z \circ y)$
+\end{itemize}
+
+
+\subsection{Relational Structure}
+\label{sec:relational-structure}
+
+A \textbf{relational structure} is an ordered pair $(S, \mathcal{R})$,
+where:
+
+\begin{itemize}
+\item $S$ is a set
+\item $\mathcal{R}$ is an endorelation\ref{sec:endorelation} on $S$
+\end{itemize}
+
+Also called as a \textbf{relational system}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Binary Operation}
+\label{sec:binary-operation}
+
+A \textbf{binary operation} is a mapping $\circ$ from the Cartesian
+product of two sets $S \times T$ to a universe $\mathbb{U}$:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \circ: S \times T \to \mathbb{U} : \circ(s, t) = y \in \mathbb{U} \\
+    \\
+  \end{array}
+\end{math}
+
+If $S = T$ , then $\circ$ can be referred to as a \textbf{binary
+  opeation on $S$}.
+
+Some authors specify that a binary operation is defined such that
+\textit{codomain} of $\circ$ is the same underlying set as that which
+forms the \textit{domain}, that is: $\circ: S \times S \to S$.
 
 
 \subsection{Algebraic Structure}
@@ -628,8 +639,10 @@ An algebraic structure with one (binary) operation is thus an ordered
 pair which can be denoted as $(S, \circ)$ or $(T, *)$ or
 $\pair{S, \circ}$, and so on.
 
+The set $S$ is called \textbf{underlying set}.
 
-\subsubsection{Closure}
+
+\subsection{Closure}
 \label{sec:closure}
 
 Let $(S, \circ)$ be an algebraic structure. Then $S$ has the property
@@ -637,7 +650,9 @@ of \textbf{closure under $\circ$} if and only if:
 
 \begin{math}
   \begin{array}{c}
-    \forall (x, y) \in S \times S : x \circ y \in S
+    \\
+    \forall (x, y) \in S \times S : x \circ y \in S\\
+    \\
   \end{array}
 \end{math}
 
@@ -645,7 +660,7 @@ of \textbf{closure under $\circ$} if and only if:
 $S$ is said to be \textbf{closed under $\circ$}, or just that
 $(S, \circ)$ \textbf{is closed}.
 
-\subsubsection{Magma}
+\subsection{Magma}
 \label{sec:magma}
 
 A \textbf{magma} is an algebraic structure $(S, \circ)$ such that $S$
@@ -659,17 +674,6 @@ That is, a magma is a pair $\pair{S, \circ}$ where:
 \end{itemize}
 
 
-\subsection{Relation Compatible with Operation}
-\label{sec:compatibility}
-
-Let $(S, \circ)$ be a magma. Let $\mathcal{R}$ be a relation on $S$.
-
-Then $\mathcal{R}$ is \textbf{compatible with $\circ$} if and only if:
-
-\begin{itemize}
-\item $\forall x, y, z \in S: x \mathcal{R} y \implies (x \circ z) \mathcal{R} (y \circ z)$
-\item $\forall x, y, z \in S: x \mathcal{R} y \implies (z \circ x) \mathcal{R} (z \circ y)$
-\end{itemize}
 
 
 \subsection{Commutativity}
@@ -680,11 +684,13 @@ Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
 
 \begin{math}
   \begin{array}{c}
-    \forall x, y \in S: x \circ y = y \circ x
+    \\
+    \forall x, y \in S: x \circ y = y \circ x\\
+    \\
   \end{array}
 \end{math}
 
-\subsubsection{Absorption Law}
+\subsection{Absorption Law}
 \label{sec:absorption}
 
 Let $(S, \circ, *)$ be an algebraic structure. Let both $\circ$ and
@@ -694,7 +700,9 @@ Then $\circ$ \textbf{absorbs} $*$ if and only if:
 
 \begin{math}
   \begin{array}{c}
-    \forall a, b \in S: a \circ (a * b) = a
+    \\
+    \forall a, b \in S: a \circ (a * b) = a\\
+    \\
   \end{array}
 \end{math}
 
@@ -711,7 +719,9 @@ Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
 
 \begin{math}
   \begin{array}{c}
-    \forall x, y, z \in S: (x \circ y) \circ z = x \circ (y \circ z)
+    \\
+    \forall x, y, z \in S: (x \circ y) \circ z = x \circ (y \circ z)\\
+    \\
   \end{array}
 \end{math}
 
@@ -719,14 +729,14 @@ Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
 \subsection{Idempotence}
 \label{sec:idempotence}
 
-\subsubsection{Idempotent Element}
+\paragraph{Idempotent Element}
 Let $(S, \circ)$ be a magma. Let $x \in S$ have the property that
 $ x \circ x = x$.
 
 Then $x \in S $ is described as \textbf{idempotent (element) under the
   operation $\circ$}.
 
-\subsubsection{Idempotent Operation}
+\paragraph{Idempotent Operation}
 Let $(S, \circ)$ be a magma.
 
 
@@ -736,7 +746,9 @@ binary operation $\circ$ is \textbf{idempotent} if and only if:
 
 \begin{math}
   \begin{array}{c}
-    \forall x \in S: x \circ x = x
+    \\
+    \forall x \in S: x \circ x = x\\
+    \\
   \end{array}
 \end{math}
 
@@ -750,40 +762,46 @@ Examples are: set union, set intersection, ...
 Let $(S, \circ)$ be an algebraic structure.
 
 
-\subsubsection{Left Identity}
+\paragraph{Left Identity}
 An element $e_L \in S$ is called a \textbf{left identity} if and only
 if:
 
 \begin{math}
   \begin{array}{c}
-    \forall x \in S: e_L \circ x = x
+    \\
+    \forall x \in S: e_L \circ x = x\\
+    \\
   \end{array}
 \end{math}
 
-\subsubsection{Right Identity}
+\paragraph{Right Identity}
 An element $e_R \in S$ is called a \textbf{right identity} if and only
 if:
 
 \begin{math}
   \begin{array}{c}
-    \forall x \in S: x \circ e_R = x
+    \\
+    \forall x \in S: x \circ e_R = x\\
+    \\
   \end{array}
 \end{math}
 
 
-\subsubsection{Identity}
+\paragraph{Identity}
 An element $e \in S$ is called an \textbf{identity (element)} if and
 only if it is both a \textit{left identity} and \textit{right
   identity}
 
 \begin{math}
   \begin{array}{c}
-    \forall x \in S: e \circ x = x \circ e =  x
+    \\
+    \forall x \in S: e \circ x = x \circ e =  x\\
+    \\
   \end{array}
 \end{math}
 
 
-\paragraph{Identity is Unique}
+\paragraph{Uniqueness of Identity}
 
 Suppose $e_1$ and $e_2$ are both identity elements of $(S, \circ)$.
 
@@ -791,7 +809,9 @@ Then by the definition of identity elements:
 
 \begin{math}
   \begin{array}{c}
-    \forall s \in S: s \circ e_1 = s = e_2 \circ s
+    \\
+    \forall s \in S: s \circ e_1 = s = e_2 \circ s\\
+    \\
   \end{array}
 \end{math}
 
@@ -843,7 +863,7 @@ Therefore $e_S \in S $ and so $S$ is not the empty set.
 
 Let $(S, \circ)$ be a monoid whose identity is $e_S$.
 
-\subsubsection{Left Inverse}
+\paragraph{Left Inverse}
 An element $x_L \in S$ is called a \textbf{left inverse} of $x$ if and
 only if:
 
@@ -854,7 +874,7 @@ only if:
 \end{math}
 
 
-\subsubsection{Right Inverse}
+\paragraph{Right Inverse}
 An element $x_R \in S$ is called a \textbf{right inverse} of $x$ if and
 only if:
 
@@ -864,7 +884,8 @@ only if:
   \end{array}
 \end{math}
 
-\subsubsection{Inverse}
+\paragraph{Inverse}
+
 Let $x , y \in S $ be elements. The element $y$ is an \textbf{inverse
   of $x$} if and only if $y$ is both a \textit{left inverse} and
 \textit{right inverse}.
@@ -885,18 +906,37 @@ A \textbf{group} is a \textit{semigroup} with an \textit{identity}
 \end{itemize}
 
 
-\subsection{Relational Structure}
-\label{sec:relational-structure}
+\subsection{Set Equivalence}
+\label{sec:set-eq}
 
-A \textbf{relational structure} is an ordered pair $(S, \mathcal{R})$,
-where:
+Let $S$ and $T$ be sets. Then $S$ and $T$ are \textbf{equivalent} if
+and only if there exists a \textbf{bijection} $f : S \to T$ between
+the elements of $S$ and those of $T$. That is, if they have the
+\textbf{same cardinality}. This can be written as $S \sim T$.
 
-\begin{itemize}
-\item $S$ is a set
-\item $\mathcal{R}$ is an endorelation\ref{sec:endorelation} on $S$
-\end{itemize}
 
-Also called as a \textbf{relational system}.
+\subsection{Finite Set}
+\label{sec:finite-set}
+
+A set $S$ is defined as \textbf{finite} if and only if
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \exists n \in \mathbb{N}: S \sim \mathbb{N}_{< n}\\
+    \\
+  \end{array}
+\end{math}
+
+where $\sim$ denotes \textit{set equivalence}.
+
+That is, if there exists an element $n$ of the set of natural numbers
+$\mathbb{N}$ such that the set of all elements of $\mathbb{N}$ less
+than $n$ is equivalent to $S$.
+
+Equivalently, a finite set is a set with a count.
+
+
 
 
 
