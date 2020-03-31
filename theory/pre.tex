@@ -1606,13 +1606,40 @@ Note that every continuous function between dcpos is a
 \subsubsection{Kleene Fixpoint Theorem}
 \label{sec:fixpoint-theorem}
 
+Suppose $(L, \sle)$ is directed-complete partial order with a least
+element, and $f: L \to L$ be a Scott-continuous (and therefore
+monotone) function. Then $f$ has a least fixed point, which is the
+supremum of the ascending Kleene chain of $f$.
 
-Every order-preserving self-map $f$ of a cpo $(P, \bot)$ has a least
-fixpoint. If $f$ is continuous, then this fixpoint is equal to the
-supremum of the iterates $(\bot, f(\bot), f(f(\bot)), ...)$ of $\bot$.
+The \textbf{ascending Kleene chain} of $f$ is the chain
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \bot \sle f(\bot) \sle f(f(\bot)) \sle ... \sle f^n(\bot) \sle ...\\
+    \\
+  \end{array}
+\end{math}
+
+obtained by iterating $f$ on the least element $\bot$ of $L$. The
+theorem states that
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \mathtt{lfp}(f) = \mathtt{sup}( \{ f^n(\bot) | n \in \mathbb{N}\})\\
+    \\
+  \end{array}
+\end{math}
+
+where $\mathtt{lfp}$ denotes the least fixed point.
 
 
-
+Every \textit{order-preserving}\ref{sec:monotone}
+\textit{self-map}\ref{sec:self-map} $f$ of a cpo $(P, \bot)$ has a
+least fixpoint. If $f$ is continuous, then this fixpoint is equal to
+the supremum of the iterates $(\bot, f(\bot), f(f(\bot)), ...)$ of
+$\bot$.
 
 
 
