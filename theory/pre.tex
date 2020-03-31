@@ -947,17 +947,17 @@ Equivalently, a finite set is a set with a count.
 
 \paragraph{Definition}
 
-Let $S$ be a set.
-
-An \textbf{ordering on} $S$ is a relation $\mathcal{R}$ on $S$ such
-that:
+Let $S$ be a set. An \textbf{ordering on} $S$ is a relation
+$\mathcal{R}$ on $S$ such that:
 
 \begin{itemize}
-\item $\mathcal{R}$ is \textbf{reflexive}, i.e., $\forall a \in S: a \mathcal{R} a$.
-\item $\mathcal{R}$ is \textbf{transitive}, i.e.,
+\item $\mathcal{R}$ is \textbf{reflexive}\ref{sec:reflexivity}, i.e.,
+  $\forall a \in S: a \mathcal{R} a$.
+\item $\mathcal{R}$ is \textbf{transitive}\ref{sec:transitivity},
+  i.e.,
   $\forall a, b, c \in S: a \mathcal{R} b \land b \mathcal{R} c
   \implies a \mathcal{R} c$.
-\item $\mathcal{R}$ is \textbf{antisymmetric}, i.e.,
+\item $\mathcal{R}$ is \textbf{antisymmetric}\ref{sec:symmetry}, i.e.,
   $\forall a \in S : a \mathcal{R} b \land b \mathcal{R} a \implies a
   = b$.
 \end{itemize}
@@ -1010,7 +1010,7 @@ a comparison of size may not be intellectually sustainable.
 \label{sec:ordered-set}
 
 An \textbf{ordered set} is a relational structure $(S, \preceq)$ such
-that the relation $preceq$ is an ordering.
+that the relation $\preceq$ is an ordering.
 
 
 \subsection{Ordered Structure}
@@ -1022,13 +1022,14 @@ that:
 \begin{itemize}
 \item $(S, \circ)$ is an algebraic structure
 \item $(S, \preceq)$ is an ordered set
-\item $\preceq$ is compatible with $\circ$
+\item $\preceq$ is \textit{compatible}\ref{sec:compatibility} with
+  $\circ$
 \end{itemize}
 
 
 \subsection{Monotone}
 
-\subsubsection{Increasing}
+\paragraph{Increasing}
 \label{sec:increasing}
 
 Let $(S, \preceq_1)$ and $(T, \preceq_2)$ be ordered sets. Let
@@ -1048,7 +1049,7 @@ Note that this definition also holds if $S = T$.
 It is also called as \textbf{order-preserving}, \textbf{isotone}, and
 \textbf{non-decreasing}.
 
-\subsubsection{Decreasing}
+\paragraph{Decreasing}
 \label{sec:decreasing}
 
 Let $(S, \preceq_1)$ and $(T, \preceq_2)$ be ordered sets. Let
@@ -1070,7 +1071,7 @@ It is also called as \textbf{order-inverting},
 \textbf{non-increasing}.
 
 
-\subsubsection{Monotone}
+\paragraph{Monotone}
 \label{sec:monotone}
 
 
@@ -1087,15 +1088,17 @@ Note that this definition also holds if $S = T$.
 \label{sec:upper-bound}
 
 Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$. An
-\textbf{upper bound for $T$ in $S$} is an element $M \in S$ such that:
+\textbf{upper bound for $T$ in $S$} is an element $m \in S$ such that:
 
 \begin{math}
   \begin{array}{c}
-    \forall t \in T : t \preceq M
+    \\
+    \forall t \in T : t \preceq m\\
+    \\
   \end{array}
 \end{math}
 
-That is, $M$ \textit{succeeds} every elements of $T$.
+That is, $m$ \textit{succeeds} every elements of $T$.
 
 
 
@@ -1123,11 +1126,7 @@ often referred to as the \textbf{least upper bound of $T$} and denoted
 $\mathtt{lub}(T)$.
 
 
-\subsubsection{Supremum is Unique}
-
-$T$ has at most one supremum in $S$.
-
-\paragraph{Proof}
+\paragraph{Uniqueness of Supremum}
 
 Let $c$ and $c'$ both be suprema of $T$ in $S$. From the definition of
 supremum, $c$ and $c'$ are upper bounds of $T$ in $S$.
@@ -1135,24 +1134,20 @@ supremum, $c$ and $c'$ are upper bounds of $T$ in $S$.
 By that definition:
 
 \begin{itemize}
-\item $c$ is an upper bound of $T$ in $S$, and $c'$ is a supremum of $T$ in $S$ implies that $c' \preceq c$.
-\item $c'$ is an upper bound of $T$ in $S$, and $c$ is supremum of $T$ in $S$ implies that $c preceq c'$.
+\item $c$ is an upper bound of $T$ in $S$, and $c'$ is a supremum of
+  $T$ in $S$ implies that $c' \preceq c$.
+\item $c'$ is an upper bound of $T$ in $S$, and $c$ is supremum of $T$
+  in $S$ implies that $c preceq c'$.
 \end{itemize}
 
-
-So
-
-\begin{math}
-  \begin{array}{c}
-    c' \preceq c \land c \preceq c'
-  \end{array}
-\end{math}
-
-and thus by the antisymmetry of the ordering $\preceq$:
+Therefore,
 
 \begin{math}
-  \begin{array}{c}
-    c = c' \\
+  \begin{array}{ll}
+    \\
+    c' \preceq c \land c \preceq c'\\
+    \therefore c = c' & \because \preceq \text{ is antisymmetry}\\
+    \\
   \end{array}
 \end{math}
 
@@ -1170,7 +1165,9 @@ Then the \textbf{join of $a$ and $b$}\footnote{some sources refer to
 
 \begin{math}
   \begin{array}{c}
-    a \vee b = \mathtt{sub} \{ a, b \}
+    \\
+    a \vee b = \mathtt{sup} \{ a, b \}\\
+    \\
   \end{array}
 \end{math}
 
@@ -1179,7 +1176,9 @@ and only if:
 
 \begin{math}
   \begin{array}{c}
-    a \preceq c\text{ and }b \preceq c\text{ and }\forall s \in S: a \preceq s \land b \preceq s \implies c \preceq s
+    \\
+    a \preceq c\text{ and }b \preceq c\text{ and }\forall s \in S: a \preceq s \land b \preceq s \implies c \preceq s\\
+    \\
   \end{array}
 \end{math}
 
@@ -1193,7 +1192,9 @@ Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$. A
 
 \begin{math}
   \begin{array}{c}
-    \forall t \in T: m \preceq t
+    \\
+    \forall t \in T: m \preceq t\\
+    \\
   \end{array}
 \end{math}
 
@@ -1235,7 +1236,9 @@ Then the \textbf{meet of $a$ and $b$}\footnote{some sources refer to
 
 \begin{math}
   \begin{array}{c}
-    a \wedge b =\mathtt{inf} \{ a, b \}
+    \\
+    a \wedge b =\mathtt{inf} \{ a, b \}\\
+    \\
   \end{array}
 \end{math}
 
@@ -1245,7 +1248,9 @@ and only if:
 
 \begin{math}
   \begin{array}{c}
-    c \preceq c\text{ and }c \preceq b\text{ and } \forall s \in S: s \preceq a \land s \preceq b \implies s \preceq c
+    \\
+    c \preceq c\text{ and }c \preceq b\text{ and } \forall s \in S: s \preceq a \land s \preceq b \implies s \preceq c\\
+    \\
   \end{array}
 \end{math}
 
@@ -1271,28 +1276,27 @@ it satisfies the semilattice axioms:
 
 
 \subsubsection{Join Semilattice}
-Let $(S, \vee, \preceq)$ be an ordered structure and $\vee$ is join
-operator.
 
-Suppose that $\forall a, b \in S: a \vee b \in S$ where $a \vee b$ is
-the join of $a$ and $b$ with respect to $\preceq$.
+Let $(S, \vee, \preceq)$ be an ordered structure and $\vee$ is join
+operator. Suppose that $\forall a, b \in S: a \vee b \in S$ where
+$a \vee b$ is the join of $a$ and $b$ with respect to $\preceq$.
 
 Then the ordered structure $(S, \vee, \preceq)$ is called a
 \textbf{join semilattice}.
 
 
 \subsubsection{Meet Semilattice}
-Let $(S, \wedge, \preceq)$ be an ordered structure and $\wedge$ is meet
-operator.
 
-Suppose that $\forall a, b \in S: a \wedge b \in S$ where $a \wedge b$ is
-the meet of $a$ and $b$ with respect to $\preceq$.
+Let $(S, \wedge, \preceq)$ be an ordered structure and $\wedge$ is
+meet operator. Suppose that $\forall a, b \in S: a \wedge b \in S$
+where $a \wedge b$ is the meet of $a$ and $b$ with respect to
+$\preceq$.
 
 Then the ordered structure $(S, \wedge, \preceq)$ is called a
 \textbf{meet semilattice}.
 
 
-\subsubsection{Semilattice Induces Ordering}
+\paragraph{Semilattice Induces Ordering}
 \label{sec:semilattice-induces-ordering}
 
 Let $(S, \circ)$ be a semlilattice. Let $\preceq$ be the relation on
@@ -1300,7 +1304,7 @@ $S$ defined by $\forall a, b \in S: a \preceq b \iff a \circ b = b$.
 
 Then $\preceq$ is an ordering.
 
-\paragraph{Proof}
+\subparagraph{Proof}
 
 Let's verify that $\preceq$ satisfies the three conditions for an
 ordering.
@@ -1313,11 +1317,8 @@ is \textit{reflexive}.
 
 \subparagraph{Antisymmetry}
 
-Suppose that $a \preceq b$ and $b \preceq a$.
-
-Then from the first relation: $a \circ b = b$
-
-and from the second: $b \circ a =a$.
+Suppose that $a \preceq b$ and $b \preceq a$. Then from the first
+relation: $a \circ b = b$ and from the second: $b \circ a =a$.
 
 Since $\circ$ is \textit{commutative}, it follows that $a = b$. Hence
 $\preceq$ is \textit{antisymmetric}.
@@ -1344,7 +1345,8 @@ Thus, $\preceq$ is \textit{transitive}.
 \subsection{Lattice}
 \label{sec:lattice}
 
-\subsubsection{Definition 1}
+\paragraph{Definition 1}
+
 Let $(S, \preceq)$ be an ordered set. Suppose that $S$ admits all
 finite non-empty suprema and finite non-empty infima. Denote with
 $\wedge$ and $\vee$ the join and meet operations on $S$, respectively.
@@ -1352,7 +1354,7 @@ $\wedge$ and $\vee$ the join and meet operations on $S$, respectively.
 Then the ordered structure $(S, \wedge, \vee, \preceq)$ is called a
 \textbf{lattice}.
 
-\subsubsection{Definition 2}
+\paragraph{Definition 2}
 
 Let $(S, \wedge, \vee, \preceq)$ be an ordered structure.
 
@@ -1364,7 +1366,7 @@ only if:
 \item $(S,\wedge, \preceq)$ is a meet semilattice
 \end{itemize}
 
-\subsubsection{Definition 3}
+\paragraph{Definition 3}
 
 Let $(S, \vee)$ and $(S, \wedge)$ be semilattices on a set $S$.
 
@@ -1390,16 +1392,18 @@ Then the ordered structure $(S, \vee, \wedge, \preceq)$ is called a
 \textbf{lattice}.
 
 
-\subsubsection{Complete Lattice}
+\subsection{Complete Lattice}
 \label{sec:complete-lattice}
 
 Let $(S, \preceq)$ be a lattice. Then, $(S, \preceq)$ is a
 \textbf{complete lattice} if and only if:
 
 \begin{math}
-  \begin{array}{lc}
+  \begin{array}{ll}
+    \\
     & \forall T \subseteq S: T \text{ admits both a \textit{supremum} and an \textit{infimum}} \\
     \text{or} & \forall T \subseteq S: \mathtt{inf}T, \mathtt{sup}T \in S \\
+    \\
   \end{array}
 \end{math}
 
@@ -1422,14 +1426,14 @@ $S$. $\mathcal{R}$ is a \textbf{pre-ordering} if and only if:
   a \mathcal{R} c $
 \end{itemize}
 
-\subsubsection{Pre-Ordered Set}
+\paragraph{Pre-Ordered Set}
 
 Let $S$ be a set, and $\precsim$ be a \textbf{preordering} on
 $S$. Then the relational structure $(S, \precsim)$ is called a
 \textbf{preordered set}.
 
 
-\subsubsection{Partial vs. Total}
+\paragraph{Partial vs. Total}
 
 Note that this definition of preordering does not demand that
 \textit{every} pair of elements of $S$ is related by $\precsim$. The
@@ -1445,7 +1449,7 @@ If it is \textit{not} the case that $\precsim$ is connected, then
 $\precsim$ is called a partial preordering.
 
 
-\subsubsection{Directed Set}
+\subsection{Directed Set}
 \label{sec:directed-set}
 
 Let $(S, \precsim)$ be a preordered set. Then $(S, \precsim)$ is a
@@ -1455,7 +1459,7 @@ an \textbf{upper bound}\ref{sec:upper-bound} in $S$:
 \begin{math}
   \begin{array}{c}
     \\
-    \forall x, y \in S: \exists M \in S: x \precsim M \land y \precsim M \\
+    \forall x, y \in S: \exists m \in S: x \precsim m \land y \precsim m \\
     \\
   \end{array}
 \end{math}
@@ -1463,7 +1467,7 @@ an \textbf{upper bound}\ref{sec:upper-bound} in $S$:
 Also called as a \textbf{directed preorder}, \textbf{filtered set}, or
 \textbf{upward directed set}.
 
-\subsubsection{Directed Subset}
+\paragraph{Directed Subset}
 \label{sec:directed-subset}
 
 Let $(S, \precsim)$ be a preordered set. Let $H$ be a non-empty subset
@@ -1472,7 +1476,7 @@ of $S$. Then $H$ is a \textbf{directed subset} of $S$ if and only if:
 \begin{math}
   \begin{array}{c}
     \\
-    \forall x, y \in H: \exists M \in H: x \precsim M \land y \precsim M\\
+    \forall x, y \in H: \exists m \in H: x \precsim m \land y \precsim m\\
     \\
   \end{array}
 \end{math}
@@ -1491,7 +1495,9 @@ $\preceq$. That is,
 
 \begin{math}
   \begin{array}{c}
+    \\
     \forall T \subseteq S: \exists a \in T : \forall x \in T : a \preceq x
+    \\
   \end{array}
 \end{math}
 
@@ -1542,7 +1548,9 @@ That is, $\mathcal{R}$ is an ordering with no non-comparable pairs:
 
 \begin{math}
   \begin{array}{c}
-    \forall x, y \in S: x \mathcal{R} y \lor y \mathcal{R} x
+    \\
+    \forall x, y \in S: x \mathcal{R} y \lor y \mathcal{R} x\\
+    \\
   \end{array}
 \end{math}
 
@@ -1616,7 +1624,7 @@ depending on context, refer to any of the following concepts:
 \end{itemize}
 
 
-\subsubsection{Properties}
+\paragraph{Properties}
 
 An ordered set $P$ is a pointed dcpo if and only if every chain has a
 supremum in $P$, i.e., $P$ is chain-complete. Alternatively, an
@@ -1627,7 +1635,7 @@ introducing a flat order with $\bot \leq s$ and $s \leq s$ for every
 $s \in S$ and no other order relations.
 
 
-\subsubsection{Continuous}
+\subsubsection{(Scott) Continuous}
 \label{sec:scott-continuous}
 
 A function $f$ between two dcpos $P$ and $Q$ is called \textbf{(Scott)
