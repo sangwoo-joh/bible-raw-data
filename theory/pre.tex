@@ -592,6 +592,35 @@ $\mathcal{R}$ is \textbf{non-transitive} if and only if it is neither
 \textit{transitive} nor \textit{antitransitive}.
 
 
+\subsubsection{Transitive Closure}
+\label{sec:transitive-closure}
+
+Let $\mathcal{R}$ be a relation on a set $S$. The \textbf{transitive
+  closure of $\mathcal{R}$} is defined as the smallest transitive
+relation on $S$ which contains $\mathcal{R}$ as a subset.
+
+Or, the \textbf{transitive closure of $\mathcal{R}$} is defined as the
+intersection of all transitive relations on $S$ which contains
+$\mathcal{R}$.
+
+Or, the \textbf{transitive closure of $\mathcal{R}$} is the relation
+$\mathcal{R}^+$ defined as follows:
+
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x, y \in S, x \mathcal{R}^+ y \iff \exists n \in \mathbb{N}_{>0} : \exists s_0, s_1, ..., s_n \in S: s_0 = x, s_n = y \\
+    \\
+    s_0 \mathcal{R} s_1\\
+    s_1 \mathcal{R} s_2\\
+    \vdots\\
+    s_{n-1} \mathcal{R} s_n \\
+    \\
+  \end{array}
+\end{math}
+
+
 \subsection{Total Relation}
 \label{sec:total-relation}
 
@@ -1890,7 +1919,8 @@ It is that second property that leads to describe $\preceq^*$ as
 \subsection{Weak Topological Ordering}
 \label{sec:wto}
 
-\footnote{This origiates from https://en.wikipedia.org/wiki/Topological\_sorting}
+\footnote{This origiates from
+  https://en.wikipedia.org/wiki/Topological\_sorting}
 
 A \textbf{topological sort}, or \textbf{(weak) topological ordering}
 of a directed graph is a \textbf{linear
