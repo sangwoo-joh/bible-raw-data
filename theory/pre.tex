@@ -42,6 +42,7 @@ follows that there is considerable overlap between the fields of
 relation theory and graph theory.
 
 \subsection{Set Equivalence}
+\label{sec:set-eq}
 
 Let $S$ and $T$ be sets. Then $S$ and $T$ are \textbf{equivalent} if
 and only if there exists a \textbf{bijection} $f : S \to T$ between
@@ -63,6 +64,7 @@ Other terms that are used that mean the same things as
 \end{itemize}
 
 \subsection{Finite Set}
+\label{sec:finite-set}
 
 A set $S$ is defined as \textbf{finite} if and only if
 
@@ -118,6 +120,99 @@ subset $R \subseteq \mathbb{S}$.
 To indicate that $(s_1, s_2, ..., s_n) \in R$, we
 write: $\mathcal{R}(s_1, s_2, ..., s_n)$
 
+\subsubsection{Domain}
+\label{sec:domain}
+
+Let $\mathcal{R} \subseteq S \times T$ be a relation. The
+\textbf{domain} of $\mathcal{R}$ is defined and denoted as:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \mathtt{Dom}(\mathcal{R}) := \{ s \in S: \exists t \in T: (s, t) \in \mathcal{R} \}\\
+    \\
+  \end{array}
+\end{math}
+
+\paragraph{General Definition}
+
+Let $\displaystyle \prod_{i=1}^n S_i$ be the Cartesian product of sets
+$S_1$ to $S_n$. Let
+$\mathcal{R} \subseteq \displaystyle \prod_{i=1}^n S_i$ be an $n$-ary
+relation on $\displaystyle \prod_{i=1}^n S_i$.
+
+The \textbf{domain of $\mathcal{R}$} is the set defined as:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \mathtt{Dom}(\mathcal{R}) := \{ (s_1, s_2, ..., s_{n-1}) \in \displaystyle \prod_{i=1}^{n-1} S_i : \exists s_n \in S_n : (s_1, s_2, ..., s_n) \in \mathcal{R} \}\\
+    \\
+  \end{array}
+\end{math}
+
+The concept is usually encountered when $\mathcal{R}$ is an
+endorelation on $S$:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \mathtt{Dom}(\mathcal{R}) := \{ (s_1, s_2, ..., s_{n-1}) \in S^{n-1} : \exists s_n \in S : (s_1, s_2, ..., s_n) \in \mathcal{R} \}\\
+    \\
+  \end{array}
+\end{math}
+
+
+\subsubsection{Codomain}
+\label{sec:codomain}
+
+The \textbf{codomain} of a relation $\mathcal{R} \subseteq S \times T$
+is the set $T$. It can be denoted as $\mathtt{Cdm}(\mathcal{R})$.
+
+
+\subsubsection{Image}
+\label{sec:image}
+
+Let $\mathcal{R} \subseteq S \times T$ be a relation. The
+\textbf{image} of $\mathcal{R}$ is the set:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \mathtt{Img}(\mathcal{R}) := \mathcal{R}[S] = \{ t \in T: \exists s \in S: (s, t) \in \mathcal{R} \}\\
+    \\
+  \end{array}
+\end{math}
+
+\paragraph{General Definition}
+
+Let $\displaystyle \prod_{i=1}^n S_i$ be the Cartesian product of sets
+$S_1$ to $S_n$. Let
+$\mathcal{R} \subseteq \displaystyle \prod_{i=1}^n S_i$ be an $n$-ary
+relation on $\displaystyle \prod_{i=1}^n S_i$.
+
+The \textbf{image of $\mathcal{R}$} is the set defined as:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \mathtt{Img}(\mathcal{R}) := \{ s_n \in S_n: \exists (s_1, s_2, ..., s_{n-1} \in \displaystyle \prod_{i=1}^{n-1} S_i: (s_1, s_2, ..., s_n) \in \mathcal{R} \}\\
+    \\
+  \end{array}
+\end{math}
+
+The concept is usually encountered when $\mathcal{R}$ is an
+endorelation on $S$:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \mathtt{Img}(\mathcal{R}) := \{ s_n \in S: \exists (s_1, s_2, ..., s_{n-1}) \in S^{n-1}: (s_1, s_2, ..., s_n) \in \mathcal{R} \}\\
+    \\
+  \end{array}
+\end{math}
+
+
 \subsubsection{Unary Relation}
 As a special case of an $n$-ary relation on $S$, note that when $n=1$
 we define a \textbf{unary relation} on $S$ as
@@ -125,14 +220,15 @@ $\mathcal{R} \subseteq S$. That is, a \textbf{unary relation} is a
 subset of $S$.
 
 \subsubsection{Endorelation}
+\label{sec:endorelation}
 Let $S \times S$ be the Cartesian product of a set or class $S$ with
 itself. Let $\mathcal{R}$ be a \textbf{relation} on $S \times S$. Then
 $\mathcal{R}$ is referred to as an \textbf{endorelation on} $S$.
 
 
 The term \textbf{endorelation} is rarely seen. Once it is established
-that the \textit{domain and codomain of a given relation are the same
-  set}, further comment is rarely needed.
+that the \textit{domain} and \textit{codomain} of a given relation are
+the \textbf{same set}, further comment is rarely needed.
 
 
 An \textbf{endorelation} is also called a \textbf{relation in} $S$, or
@@ -142,6 +238,231 @@ arise.
 
 Some sources use the term \textbf{binary relation} exclusively to
 refer to a \textbf{binary endorelation}.
+
+
+\subsubsection{Many-to-One Relation}
+\label{sec:many-to-one}
+
+A relation $\mathcal{R} \subseteq S \times T$ is \textbf{many-to-one}
+if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x \in \mathtt{Dom}(\mathcal{R}): \forall y_1, y_2 \in \mathtt{Cdm}(\mathcal{R}): (x, y_1) \in \mathcal{R} \land (x, y_2) \in \mathcal{R} \implies y_1 = y_2 \\
+    \\
+  \end{array}
+\end{math}
+
+That is, every element of the domain of $\mathcal{R}$ relates to no
+more than one element of its codomain.
+
+\subsubsection{One-to-Many Relation}
+\label{sec:one-to-many}
+
+A relation $\mathcal{R} \subseteq S \times T$ is \textbf{one-to-many}
+if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall y \in \mathtt{Img}(\mathcal{R}): (x_1, y) \in \mathcal{R} \land (x_2, y) \in \mathcal{R} \implies x_1 = x_2 \\
+    \\
+  \end{array}
+\end{math}
+
+That is, every element of the image of $\mathcal{R}$ relates to by
+exactly one element of its domain. Note that the condition concerns
+the elements in the \textit{image}, not the
+\textit{codomain}\footnote{Thus, a one-to-many relation may leave some
+  element(s) of the codomain unrelated}.
+
+Also called as \textit{injective relation}\ref{sec:injection}.
+
+
+
+\subsubsection{One-to-One Relation}
+\label{sec:one-to-one}
+
+A relation $\mathcal{R} \subseteq S \times T$ is \textbf{one-to-one}
+if it is both many-to-one and one-to-many. That is, every element of
+the domain of $\mathcal{R}$ relates to no more than one element of its
+codomain, and every element of the image is related to by exactly one
+element of its domain.
+
+
+
+\subsubsection{Left-Total Relation}
+\label{sec:left-total}
+
+Let $S$ and $T$ be sets, and $\mathcal{R} \subseteq S \times T$ be a
+relation in $S$ to $T$. Then $\mathcal{R}$ is \textbf{left-total} if
+and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall s \in S: \exists t \in T: (s, t) \in \mathcal{R} \\
+    \\
+  \end{array}
+\end{math}
+
+That is, if and only if every element of $S$ relates to some element
+of $T$, i.e., the domain of $\mathcal{R}$ equals to $S$.
+
+\subsubsection{Right-Total Relation}
+\label{sec:right-total}
+
+Let $S$ and $T$ be sets, and $\mathcal{R} \subseteq S \times T$ be a
+relation in $S$ to $T$. Then $\mathcal{R}$ is \textbf{right-total} if
+and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall t \in T: \exists s \in S: (s, t) \in \mathcal{R} \\
+    \\
+  \end{array}
+\end{math}
+
+That is, if and only if every element of $T$ relates to by some
+element of $S$, i.e., the image of $\mathcal{R}$ equals to $T$.
+
+
+
+
+
+\subsection{Mapping}
+\label{sec:mapping}
+
+Let $S$ and $T$ be sets, and $S \times T$ be their Cartesian product.
+
+
+\subsubsection{Definition 1}
+
+A \textbf{mapping} from $S$ to $T$ is a binary relation on
+$S \times T$ which associates each element of $S$ with exactly one
+element of $T$.
+
+\subsubsection{Definition 2}
+
+A \textbf{mapping $f$ from $S$ to $T$}, denoted $f: S \to T$, is a
+relation $f = (S, T, G)$ where $G \subseteq S \times T$ such that:
+
+\begin{math}
+  \begin{array}{l}
+    \\
+    \forall x \in S: \forall y_1, y_2 \in T: (x, y_1) \in G \land (x, y_2) \in G \implies y_1 = y_2 \\
+    \text{and} \\
+    \forall x \in S: \exists y in T: (x, y) \in G \\
+    \\
+  \end{array}
+\end{math}
+
+\subsubsection{Definition 3}
+
+A \textbf{mapping $f$ from $S$ to $T$}, denoted $f: S \to T$, is a
+relation $f = (S, T, R)$ where $R \subseteq S \times T$ such that:
+
+\begin{math}
+  \begin{array}{l}
+    \\
+    \forall (x_1, y_1), (x_2, y_2) \in \mathcal{R}: y_1 \neq y_2 \implies x_1, x_2 \\
+    \text{and} \\
+    \forall x \in S: \exists y \in T: (x, y) \in \mathcal{R} \\
+    \\
+  \end{array}
+\end{math}
+
+\subsubsection{Definition 4}
+
+A \textbf{mapping from $S$ to $T$} is a relation on $S \times T$ which is:
+
+\begin{itemize}
+\item Many-to-one
+\item Left-total, that is, defined for all elements in $S$
+\end{itemize}
+
+\subsubsection{Self-Map}
+\label{sec:self-map}
+
+Let $S$ be a set. A \textbf{self-map on $S$} is a \textbf{mapping}
+from $S$ to itself: $f: S \to S$.
+
+\subsubsection{Defined}
+\label{sec:defined}
+
+A mapping $f \subseteq S \times T$ is \textbf{defined} at $x \in S$ if
+and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \exists y \in T: (x, y) \in f\\
+    \\
+  \end{array}
+\end{math}
+
+If for some $x \in S$, one has:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall y \in T: (x, y) \notin f\\
+    \\
+  \end{array}
+\end{math}
+
+then $f$ is \textbf{not defined} or \textbf{undefined} at $x$, and
+indeed, $f$ is not technically a mapping at all.
+
+
+\subsubsection{Injection}
+\label{sec:injection}
+
+A mapping $f$ is an \textbf{injection} or \textbf{injective} if and
+only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x_1, x_2 \in \mathtt{Dom}(f): f(x_1) = f(x_2) \implies x_1 = x_2 \\
+    \\
+  \end{array}
+\end{math}
+
+That is, an injection is a mapping such that the output
+\textit{uniquely determines} its input.
+
+\subsubsection{Surjection}
+\label{sec:surjection}
+
+Let $S$ and $T$ be sets and $f : S \to T$ be a mapping from $S$ to
+$T$. $f$ is a \textbf{subjection} if and only if
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall y \in T: \exists x \in \mathtt{Dom}(f) : f(x) = y\\
+    \\
+  \end{array}
+\end{math}
+
+That is, if and only if $f$ is right-total.
+
+Also called as \textbf{onto mapping}, or just \textbf{onto}\footnote{A
+  mapping which is not surjective is hence described as \textbf{into}}.
+
+
+\subsubsection{Bijection}
+\label{sec:bijection}
+
+A mapping $f: S \to T$ is a \textbf{bijection} if and only if both
+\begin{itemize}
+\item $f$ is an injection
+\item $f$ is a surjection
+\end{itemize}
+
 
 
 \subsection{Symmetry}
@@ -252,11 +573,14 @@ $\mathcal{R}$ is \textbf{non-transitive} if and only if it is neither
 Let $\mathcal{R} \subseteq S \times S$ be a relation on a set
 $S$. Then $\mathcal{R}$ is defined as \textbf{total} if and only if:
 
-$\forall a, b \in S : (a, b) \in \mathcal{R} \lor (b, a) \in
-\mathcal{R}$
+\begin{math}
+  \begin{array}{c}
+    \forall a, b \in S : (a, b) \in \mathcal{R} \lor (b, a) \in \mathcal{R} \\
+    \\
+  \end{array}
+\end{math}
 
 That is, if and only if every pair of elements is related.
-
 
 Also called as \textbf{strictly connected}, or \textbf{complete
   relation}.
@@ -267,19 +591,26 @@ Also called as \textbf{strictly connected}, or \textbf{complete
 Let $\mathcal{R} \subseteq S \times S$ be a relation on a set
 $S$. Then $\mathcal{R}$ is \textbf{connected} if and only if:
 
-$\forall a, b \in S: a \neq b \implies (a, b) \in \mathcal{R} \lor
-(b,a) \in \mathcal{R}$
+\begin{math}
+  \begin{array}{c}
+    \forall a, b \in S: a \neq b \implies (a, b) \in \mathcal{R} \lor (b,a) \in \mathcal{R} \\
+    \\
+  \end{array}
+\end{math}
+
 
 That is, if and only if every pair of \textit{distinct} elements is
 related.
 
 
 Also called as \textbf{weakly connected}, while \textit{strictly
-  connected} refers to \textit{total relation}.
+  connected} refers to \textit{total
+  relation}\ref{sec:total-relation}.
 
 
 
 \subsection{Algebraic Structure}
+\label{sec:algebraic-structure}
 
 An \textbf{algebraic structure} is an ordered tuple:
 
@@ -299,6 +630,8 @@ $\pair{S, \circ}$, and so on.
 
 
 \subsubsection{Closure}
+\label{sec:closure}
+
 Let $(S, \circ)$ be an algebraic structure. Then $S$ has the property
 of \textbf{closure under $\circ$} if and only if:
 
@@ -313,6 +646,7 @@ $S$ is said to be \textbf{closed under $\circ$}, or just that
 $(S, \circ)$ \textbf{is closed}.
 
 \subsubsection{Magma}
+\label{sec:magma}
 
 A \textbf{magma} is an algebraic structure $(S, \circ)$ such that $S$
 is closed unser $\circ$.
@@ -326,6 +660,7 @@ That is, a magma is a pair $\pair{S, \circ}$ where:
 
 
 \subsection{Relation Compatible with Operation}
+\label{sec:compatibility}
 
 Let $(S, \circ)$ be a magma. Let $\mathcal{R}$ be a relation on $S$.
 
@@ -338,6 +673,7 @@ Then $\mathcal{R}$ is \textbf{compatible with $\circ$} if and only if:
 
 
 \subsection{Commutativity}
+\label{sec:commutativity}
 
 Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
 \textbf{commutative on $S$} if and only if:
@@ -349,6 +685,8 @@ Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
 \end{math}
 
 \subsubsection{Absorption Law}
+\label{sec:absorption}
+
 Let $(S, \circ, *)$ be an algebraic structure. Let both $\circ$ and
 $*$ be commutative.
 
@@ -366,6 +704,7 @@ This equality is called the \textbf{absorption law of $\circ$ for
 
 
 \subsection{Associativity}
+\label{sec:associativity}
 
 Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
 \textbf{associative on $S$} if and only if:
@@ -378,6 +717,7 @@ Let $(S, \circ)$ be an algebraic structure. Then $\circ$ is
 
 
 \subsection{Idempotence}
+\label{sec:idempotence}
 
 \subsubsection{Idempotent Element}
 Let $(S, \circ)$ be a magma. Let $x \in S$ have the property that
@@ -405,6 +745,8 @@ Examples are: set union, set intersection, ...
 
 
 \subsection{Identity}
+\label{sec:identity}
+
 Let $(S, \circ)$ be an algebraic structure.
 
 
@@ -465,6 +807,7 @@ Then:
 
 
 \subsection{Semigroup}
+\label{sec:semigroup}
 
 Let $(S, \circ)$ be a magma. Then this magma is a \textbf{semigroup}
 if and only if $\circ$ is \textit{associative} on $S$.
@@ -475,6 +818,7 @@ That is, a \textbf{semigroup} is an algebraic structure which is
 
 
 \subsection{Monoid}
+\label{sec:monoid}
 
 A \textbf{monoid} is a \textit{semigroup} with an \textit{identity
   element}.
@@ -495,6 +839,8 @@ Therefore $e_S \in S $ and so $S$ is not the empty set.
 
 
 \subsection{Inverse}
+\label{sec:inverse}
+
 Let $(S, \circ)$ be a monoid whose identity is $e_S$.
 
 \subsubsection{Left Inverse}
@@ -525,6 +871,7 @@ Let $x , y \in S $ be elements. The element $y$ is an \textbf{inverse
 
 
 \subsection{Group}
+\label{sec:group}
 
 A \textbf{group} is a \textit{semigroup} with an \textit{identity}
 (that is, a \textit{monoid}) in which every element has an
@@ -538,7 +885,18 @@ A \textbf{group} is a \textit{semigroup} with an \textit{identity}
 \end{itemize}
 
 
+\subsection{Relational Structure}
+\label{sec:relational-structure}
 
+A \textbf{relational structure} is an ordered pair $(S, \mathcal{R})$,
+where:
+
+\begin{itemize}
+\item $S$ is a set
+\item $\mathcal{R}$ is an endorelation\ref{sec:endorelation} on $S$
+\end{itemize}
+
+Also called as a \textbf{relational system}.
 
 
 
@@ -608,10 +966,15 @@ Depending on the nature of the set being ordered, and depending on the
 nature of the ordering relation, this interpretation of an ordering as
 a comparison of size may not be intellectually sustainable.
 
+\subsection{Ordered Set}
+\label{sec:ordered-set}
 
+An \textbf{ordered set} is a relational structure $(S, \preceq)$ such
+that the relation $preceq$ is an ordering.
 
 
 \subsection{Ordered Structure}
+\label{sec:ordered-structure}
 
 An \textbf{ordered structure} $(S, \circ, \preceq)$ is a set $S$ such
 that:
@@ -623,11 +986,68 @@ that:
 \end{itemize}
 
 
-\subsection{Upper Bound}
-Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
+\subsection{Monotone}
 
-An \textbf{upper bound for $T$ in $S$} is an element $M \in S$ such
-that:
+\subsubsection{Increasing}
+\label{sec:increasing}
+
+Let $(S, \preceq_1)$ and $(T, \preceq_2)$ be ordered sets. Let
+$\phi: S \to T$ be a mapping. Then $phi$ is \textbf{increasing} if and
+only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x, y \in S: x \preceq_1 y \implies \phi(x) \preceq_2 \phi(y) \\
+    \\
+  \end{array}
+\end{math}
+
+Note that this definition also holds if $S = T$.
+
+It is also called as \textbf{order-preserving}, \textbf{isotone}, and
+\textbf{non-decreasing}.
+
+\subsubsection{Decreasing}
+\label{sec:decreasing}
+
+Let $(S, \preceq_1)$ and $(T, \preceq_2)$ be ordered sets. Let
+$\phi: S \to T$ be a mapping. Then $phi$ is \textbf{decreasing} if and
+only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x, y \in S: x \preceq_1 y \implies \phi(y) \preceq_2 \phi(x) \\
+    \\
+  \end{array}
+\end{math}
+
+Note that this definition also holds if $S = T$.
+
+It is also called as \textbf{order-inverting},
+\textbf{order-reversing}, \textbf{anitone}, and
+\textbf{non-increasing}.
+
+
+\subsubsection{Monotone}
+\label{sec:monotone}
+
+
+Let $(S, \preceq_1)$ and $(T, \preceq_2)$ be ordered sets. Let
+$\phi: S \to T$ be a mapping. Then $phi$ is \textbf{monotone} if and
+only if it is either \textit{increasing} or \textit{decreasing}.
+
+Note that this definition also holds if $S = T$.
+
+
+
+
+\subsection{Upper Bound}
+\label{sec:upper-bound}
+
+Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$. An
+\textbf{upper bound for $T$ in $S$} is an element $M \in S$ such that:
 
 \begin{math}
   \begin{array}{c}
@@ -640,11 +1060,10 @@ That is, $M$ \textit{succeeds} every elements of $T$.
 
 
 \subsection{Supremum}
+\label{sec:supremum}
 
-Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
-
-An element $c \in S$ is the \textbf{supremum of $T$ in $S$} if and
-only if:
+Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$. An element
+$c \in S$ is the \textbf{supremum of $T$ in $S$} if and only if:
 
 \begin{itemize}
 \item $c$ is an \textit{upper bound} of $T$ in $S$
@@ -701,6 +1120,8 @@ Q.E.D.
 
 
 \subsection{Join}
+\label{sec:join}
+
 Let $(S, \preceq)$ be an ordered set. Let $a, b \in S$. Let their
 supremum $\mathtt{sup} \{a, b\}$ exist in $S$.
 
@@ -725,9 +1146,10 @@ and only if:
 
 
 \subsection{Lower Bound}
-Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
+\label{sec:lower-bound}
 
-A \textbf{lower bound for $T$ in $S$} is an element $m \in S$ such that:
+Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$. A
+\textbf{lower bound for $T$ in $S$} is an element $m \in S$ such that:
 
 \begin{math}
   \begin{array}{c}
@@ -739,11 +1161,10 @@ That is, $m$ \textit{precedes} every elements of $T$.
 
 
 \subsection{Infimum}
-Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$.
+\label{sec:infimum}
 
-
-An element $c \in S$ is the \textbf{infimum of $T$ in $S$} if and only
-if:
+Let $(S, \preceq)$ be an ordered set. Let $T \subseteq S$. An element
+$c \in S$ is the \textbf{infimum of $T$ in $S$} if and only if:
 
 \begin{itemize}
 \item $c$ is a \textit{lower bound} of $T$ in $S$
@@ -764,6 +1185,8 @@ denoted as $\mathtt{glb}(T)$.
 
 
 \subsection{Meet}
+\label{sec:meet}
+
 Let $(S, \preceq)$ be an ordered set. Let $a, b \in S$. Let their
 infimum $\mathtt{inf} \{a, b\}$ exist in $S$.
 
@@ -788,6 +1211,8 @@ and only if:
 
 
 \subsection{Semilattice}
+\label{sec:semilattice}
+
 A semigroup $(S, \circ)$ is called a \textbf{semilattice} if and only
 if $\circ$ is a \textit{commutative} and \textit{idempotent}
 operation.
@@ -877,6 +1302,7 @@ Thus, $\preceq$ is \textit{transitive}.
 
 
 \subsection{Lattice}
+\label{sec:lattice}
 
 \subsubsection{Definition 1}
 Let $(S, \preceq)$ be an ordered set. Suppose that $S$ admits all
@@ -924,9 +1350,97 @@ Then the ordered structure $(S, \vee, \wedge, \preceq)$ is called a
 \textbf{lattice}.
 
 
+\subsubsection{Complete Lattice}
+\label{sec:complete-lattice}
+
+Let $(S, \preceq)$ be a lattice. Then, $(S, \preceq)$ is a
+\textbf{complete lattice} if and only if:
+
+\begin{math}
+  \begin{array}{lc}
+    & \forall T \subseteq S: T \text{ admits both a \textit{supremum} and an \textit{infimum}} \\
+    \text{or} & \forall T \subseteq S: \mathtt{inf}T, \mathtt{sup}T \in S \\
+  \end{array}
+\end{math}
+
+That is, if and only if all subsets $T$ of $S$ have both a supremum
+and an infimum.
+
+Also called as \textbf{complete ordered set}
+
+
+\subsection{Pre-Ordering}
+\label{sec:pre-ordering}
+
+Let $\mathcal{R} \subseteq S \times S$ be a relation on a set
+$S$. $\mathcal{R}$ is a \textbf{pre-ordering} if and only if:
+
+\begin{itemize}
+\item \textbf{Reflexive}: $\forall a \in S: a \mathcal{R} a $
+\item \textbf{Transitive}:
+  $\forall a,b,c \in S: a \mathcal{R} b \land b \mathcal{R} c \implies
+  a \mathcal{R} c $
+\end{itemize}
+
+\subsubsection{Pre-Ordered Set}
+
+Let $S$ be a set, and $\precsim$ be a \textbf{preordering} on
+$S$. Then the relational structure $(S, \precsim)$ is called a
+\textbf{preordered set}.
+
+
+\subsubsection{Partial vs. Total}
+
+Note that this definition of preordering does not demand that
+\textit{every} pair of elements of $S$ is related by $\precsim$. The
+way we have defined a preordering, they may be, or they may not be,
+depending on the context.
+
+If it \textit{is} the case that $\precsim$ is a \textit{connected
+  relation}\ref{sec:connected-relation}, i.e., that \textit{every
+  pair} of elements is related by $\precsim$, then $\precsim$ is
+called a total preordering.
+
+If it is \textit{not} the case that $\precsim$ is connected, then
+$\precsim$ is called a partial preordering.
+
+
+\subsubsection{Directed Set}
+\label{sec:directed-set}
+
+Let $(S, \precsim)$ be a preordered set. Then $(S, \precsim)$ is a
+\textbf{directed set} if and only if every pair of elements of $S$ has
+an \textbf{upper bound}\ref{sec:upper-bound} in $S$:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x, y \in S: \exists M \in S: x \precsim M \land y \precsim M \\
+    \\
+  \end{array}
+\end{math}
+
+Also called as a \textbf{directed preorder}, \textbf{filtered set}, or
+\textbf{upward directed set}.
+
+\subsubsection{Directed Subset}
+\label{sec:directed-subset}
+
+Let $(S, \precsim)$ be a preordered set. Let $H$ be a non-empty subset
+of $S$. Then $H$ is a \textbf{directed subset} of $S$ if and only if:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall x, y \in H: \exists M \in H: x \precsim M \land y \precsim M\\
+    \\
+  \end{array}
+\end{math}
+
 
 
 \subsection{Well-Ordering}
+\label{sec:well-ordering}
 
 Let $(S, \preceq)$ be an ordered set.
 
@@ -944,15 +1458,25 @@ $\preceq$. That is,
 \subsection{Strict Ordering}
 \label{sec:strict-ordering}
 
-Let $\mathcal{R}$ be a relation on a set $S$.
+Let $\mathcal{R}$ be a relation on a set $S$. Then $\mathcal{R}$ is a
+\textbf{strict ordering} on $S$ if and only if:
 
-Then $\mathcal{R}$ is a \textbf{strict ordering} on $S$ if and only
-if:
+\subsubsection{Definition 1}
 
 \begin{itemize}
-\item $\mathcal{R}$ is \textit{asymmetric}, i.e.,
+\item \textbf{Asymmetry}:
   $\forall a, b \in S : a \mathcal{R} b \implies \neg b \mathcal{R} a$
-\item $\mathcal{R}$ is \textit{transitive}, i.e.,
+\item \textbf{Transitivity}:
+  $\forall a, b, c \in S: a \mathcal{R} b \land b \mathcal{R} c
+  \implies a \mathcal{R} c$
+\end{itemize}
+
+\subsubsection{Definition 2}
+
+\begin{itemize}
+\item \textbf{Antireflexivity}:
+  $\forall a \in S: \neg (a \mathcal{R} a) $
+\item \textbf{Transitivity}:
   $\forall a, b, c \in S: a \mathcal{R} b \land b \mathcal{R} c
   \implies a \mathcal{R} c$
 \end{itemize}
@@ -962,6 +1486,7 @@ on $\prec$, $<$, and so on.
 
 
 \subsection{Total Ordering}
+\label{sec:total-ordering}
 
 Let $\mathcal{R} \subseteq S \times S$ be a relation on a set $S$.
 
@@ -969,7 +1494,7 @@ $\mathcal{R}$ is a \textbf{total ordering} on $S$ if and only if:
 
 \begin{itemize}
 \item $\mathcal{R}$ is an ordering on $S$
-\item $\mathcal{R}$ is connected
+\item $\mathcal{R}$ is connected\ref{sec:connected-relation}
 \end{itemize}
 
 That is, $\mathcal{R}$ is an ordering with no non-comparable pairs:
@@ -987,27 +1512,108 @@ Also called as a \textbf{linear ordering}, or a \textbf{simple
 If it is necessary to emphasises that a total ordering is \textbf{not}
 strict, then the term \textbf{weak total ordering} may be used.
 
+\subsubsection{Chain}
+\label{sec:chain}
+
+Let $(S, \preceq)$ be an ordered set. A \textbf{chain in $S$} is a
+totally ordered subset of $S$. Thus, a totally ordered set is itself a
+chain in its own right.
+
 
 \subsection{Partial Ordering}
+\label{sec:partial-ordering}
 
-Let $(S, \preceq)$ be an ordered set.
-
-Then the ordering $\preceq$ is a \textbf{partial ordering} on $S$ if
-and only if $\preceq$ is \textbf{not connected}.
+Let $(S, \preceq)$ be an ordered set. Then the ordering $\preceq$ is a
+\textbf{partial ordering} on $S$ if and only if $\preceq$ is
+\textbf{not connected}\ref{sec:connected-relation}.
 
 That is, if and only if $(S, \preceq)$ has at least one pair which is
 non-comparable:
 
 \begin{math}
   \begin{array}{c}
-    \exists x, y \in S : x \npreceq y \land y \npreceq x
+    \\
+    \exists x, y \in S : x \npreceq y \land y \npreceq x \\
+    \\
   \end{array}
 \end{math}
 
 
 It it is necessary to emphasizes that a partial ordering is
-\textbf{not} strict, then the term \textbf{weak partial ordering} may
-be used.
+\textbf{not strict}\ref{sec:strict-ordering}, then the term
+\textbf{weak partial ordering} may be used.
+
+
+\subsection{Partially Ordered Set}
+\label{sec:poset}
+
+A \textbf{partially ordered set} is a relational structure
+$(S, \preceq)$ such that $\preceq$ is a partial ordering.
+
+The partially ordered set $(S, \preceq)$ is said to be
+\textbf{partially ordered by $\preceq$}.
+
+
+
+\subsection{Complete Partial Ordering}
+\label{sec:cpo}
+
+A \textbf{complete partial order} abbreviated \textbf{cpo} can,
+depending on context, refer to any of the following concepts:
+
+\begin{itemize}
+\item A partially ordered set is a \textbf{directed-complete partial
+    order (dcpo)} if each of its \textit{directed
+    subsets}\ref{sec:directed-subset} has a supremum.
+\item A partially ordered set is a \textbf{point directed-complete
+    partial order} if it is a dcpo with a \textit{least element}.
+\item A partially ordered set is a \textbf{$\omega$-complete partial
+    order ($\omega$-cpo)} if it is a poset in which every
+  $\omega$-chain $(x_1 \leq x_2 \leq x_3 \leq ...)$ has a supremum
+  that belongs to the underlying set of the poset. Every dcpo is an
+  $\omega$-cop, since every $\omega$-chain is a directed set, but the
+  converse is not true.
+\end{itemize}
+
+
+\subsubsection{Properties}
+
+An ordered set $P$ is a pointed dcpo if and only if every chain has a
+supremum in $P$, i.e., $P$ is chain-complete. Alternatively, an
+ordered set $P$ is an pointed dcpo if and only if every
+order-preserving self-map of $P$ has a least fixpoint. Every set $S$
+can be turned into a pointed dcpo by adding a least element $\bot$ and
+introducing a flat order with $\bot \leq s$ and $s \leq s$ for every
+$s \in S$ and no other order relations.
+
+
+\subsubsection{Continuous}
+\label{sec:scott-continuous}
+
+A function $f$ between two dcpos $P$ and $Q$ is called \textbf{(Scott)
+  continuous} if it maps directed sets to directed sets while
+preserving their suprema:
+
+\begin{itemize}
+\item $f(D) \subseteq Q$ is directed for every directed $D \subseteq P$
+\item $f(\mathtt{sup}D) = \mathtt{sup} f(D)$ for every directed $D subseteq P$
+\end{itemize}
+
+Note that every continuous function between dcpos is a
+\textit{monotone function}\ref{sec:monotone}.
+
+
+\subsubsection{Kleene Fixpoint Theorem}
+\label{sec:fixpoint-theorem}
+
+
+Every order-preserving self-map $f$ of a cpo $(P, \bot)$ has a least
+fixpoint. If $f$ is continuous, then this fixpoint is equal to the
+supremum of the iterates $(\bot, f(\bot), f(f(\bot)), ...)$ of $\bot$.
+
+
+
+
 
 
 
