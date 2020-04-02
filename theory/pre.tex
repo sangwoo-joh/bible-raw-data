@@ -1150,6 +1150,48 @@ Let $(S, \preceq)$ be an ordered set, and $L \subseteq S$. $U$ is an
 \end{math}
 
 
+\subsection{Sequence}
+\label{sec:sequence}
+
+A \textbf{sequence} is a mapping\ref{sec:mapping} whose domain is a
+subset of the set of natural numbers $\mathbb{N}$. It can be seen that
+a sequence is an instance of a family of elements indexed by
+$\mathbb{N}$.
+
+Informally, a \textbf{sequence} is a set of objects which is listed in
+a \textbf{specific order}.
+
+\paragraph{Notation}
+
+If $f : A \to S$ is a \textbf{sequence}, then a symbol (e.g. $a$) is
+chosen to represents elements of this sequence. Then, for each
+$k \in A$, $f(k)$ is denoted as $a_k$, and $f$ itself is denoted as
+$\pair{a_k}_{k \in A}$ or $(a_k)_{k \in A}$.
+
+Any expression can be used to denote the \textit{domain} of $f$ in
+place of $k \in A$.
+
+Also, a seqeunce itself may be defined by a simple formula, and so for
+example:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    (k^3)_{2 \leq k \leq 6} \\
+    \\
+  \end{array}
+\end{math}
+
+is the same as :
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    (a_k)_{2 \leq k \leq 6} \text{ where } \forall k \in {2,3, ..., 6}: a_k = k^3
+    \\
+  \end{array}
+\end{math}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -1975,6 +2017,61 @@ this produces DAGs with fewer edges, but the reachability relation in
 these DAGs is still the same partial order. By using these
 constructions, one can use topological ordering algorithms to find
 linear extensions of partial orders.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\section{Graph Theory}
+\label{sec:graph-theory}
+
+\subsection{Directed Graph}
+\label{sec:digraph}
+
+A \textbf{directed graph}, or just \textbf{digraph} $D$ is a non-empty
+set $V$ together with an \emph{antireflexive
+  relation}\ref{sec:reflexivity} $E$ on $V$. The elements of $E$ are
+the \textbf{arcs}\ref{sec:arc}.
+
+\subsubsection{Arc}
+\label{sec:arc}
+
+Let $G = (V, E)$ be a digraph. The \textbf{arcs} are the elements of
+$E$. If $e \in E$ is an \textbf{arc} joining the vertex $u$ to the
+vertex $v$, it is denoted as $uv$.
+
+
+\subsection{Directed Walk}
+\label{sec:directed-walk}
+
+Let $G = (V, A)$ be a directed graph. A \textbf{directed walk} in $G$
+is a finite or infinite \textit{sequence}\ref{sec:sequence} $\pair{x_k}$
+such that:
+
+\begin{math}
+  \begin{array}{c}
+    \\
+    \forall k \in \mathbb{N}: k+1 \in \mathtt{Dom}( \pair{x_k} ): (x_k, x_{k+1} ) \in A \\
+    \\
+  \end{array}
+\end{math}
+
+
+\subsection{Reachability}
+\label{sec:reachability}
+
+Let $G = (V, A)$ be a directed graph.
+
+\paragraph{Definition 1}
+
+Let $u, v \in V$. The $v$ is \textbf{reachable} from $u$ if and only
+if there exists a \textit{directed walk} from $u$ to $v$.
+
+
+\paragraph{Definition 2}
+
+The \textbf{reachability relation} of $G$ is the \textit{transitive
+  closure}\ref{sec:transitive-closure} of $A$.
 
 
 
