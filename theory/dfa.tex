@@ -196,6 +196,35 @@ point where it was called.
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sensitivity}
+\label{sec:sensitivity}
+
+\subsection{Flow Sensitive}
+\label{sec:flow-sensitive}
+
+A \textbf{flow-sensitive} analysis takes into account the
+\textit{order of statements} in a program.
+
+\subsection{Path Sensitive}
+\label{sec:path-sensitive}
+
+A \textbf{path-sensitive} analysis computes different pieces of
+analysis information dependent of the \textit{predicates} at
+conditional branch instructions.
+
+\subsection{Context Sensitive}
+\label{sec:context-sensitive}
+
+A \textbf{context-sensitive} analysis is an \textit{inter-procedural}
+analysis that considers the \textit{calling context} when analyzing
+the target of a function call. In particular, using context
+information, one can \textit{jump back} to the original call site,
+whereas without that information, the analysis information has to be
+propagated back to all possible call sites, potentially losing
+precision.
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "program-analysis"
