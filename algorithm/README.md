@@ -8,6 +8,7 @@
  - B-Tree
  - Splay Tree
  - Disjoint Set (Union-find)
+   - Unification Algorithm
 
 ## Sort
  - Merge Sort
