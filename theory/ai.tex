@@ -1,22 +1,51 @@
 \chapter{Abstract Interpretation}
 \label{chap:ai}
 
-\section{Abstract States}
-\label{sec:abstract-states}
 
-The \textbf{complete lattice} of abstract states
-$ ( \hat{State}, \sle ) $ where
-\\
+
+\section{Analysis Algorithms Based on Global Iterations}
+\label{sec:global-iterations}
+
+\subsubsection{Basic Algorithms}
+\label{sec:basic-algorithm}
+
+If the abstract domain $\mathbb{S}^{\#}$ is of finite height, and if
+$F^{\#}$ is monotone or extensive, the increasing chain
+
 \begin{math}
-  \hat{State} : Var \to \hat{Var}
+  \begin{array}{c}
+    \\
+    \bot \sle (F^{\#})^1(\bot) \sle (F^{\#})^2(\bot) \sle \dots
+    \\
+  \end{array}
 \end{math}
 
-with the point-wise ordering
-\\
+is finite, and its biggest element is equal to
+
 \begin{math}
-  \hat{s}_1 \sle \hat{s}_2 \iff \forall x \in Var. \hat{s}_1(x) \sle
-  \hat{s}_2(x).
+  \begin{array}{c}
+    \\
+    \join_{i \geq 0} F^{{\#}^{i}} (\bot)
+    \\
+  \end{array}
 \end{math}
+
+
+\begin{figure}[h]
+  \centering
+  \begin{lstlisting}[escapeinside={(*}{*)}]
+C (*$\gets$*) (*$\bot$*)
+repeat
+   R (*$\gets$*) C
+   C (*$\gets$*) C (*$\bigcup^{\#} F^{\#} $*)(C)
+until C (*$\sle$*) R
+return R
+
+  \end{lstlisting}
+  \caption{Basic algorithm}
+  \label{fig:basic}
+\end{figure}
+
 
 %%% Local Variables:
 %%% mode: latex
