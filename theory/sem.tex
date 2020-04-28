@@ -4,3 +4,35 @@
 %%% End:
 
 \chapter{Semantics}
+
+\section{Simple Imperative Language}
+\label{sec:simple-language}
+
+
+\begin{figure}[h]
+  \begin{math}
+    \begin{array}{lcll}
+      n & \in & \mathbb{V} & \text{Scalar values}\\
+      x & \in & \mathbb{X} & \text{Program variables}\\
+      \odot & = & + | - | * | \dots & \text{Binary operators}\\
+      \oslash & = & < | \leq | == | \dots & \text{Comparison operators}\\
+      E & = & & \text{Scalar expressions}\\
+        & | & n & \text{Scalar constant}\\
+        & | & x & \text{Variable}\\
+        & | & E \odot E & \text{Binary operation}\\
+      B & = & & \text{Boolean expressions}\\
+        & | & x \oslash n & \text{Comparison of a variable with a constant}\\
+      C & = & & \text{Commands (or Statements)}\\
+        & | &\mathbf{skip} & \text{No-Op}\\
+        & | & C; C & \text{Sequence}\\
+        & | & x := E & \text{Assignment}\\
+        & | & \mathbf{input}(x) & \text{Reading a value from input}\\
+        & | & \mathbf{if}(B)\{C\} \mathbf{else} \{C\} & \text{Conditional statement}\\
+        & | & \mathbf{while}(B)\{C\} & \text{Loop statement}\\
+      P & = & C & \text{Program}\\
+    \end{array}
+  \end{math}
+
+  \caption{Syntax of a simple imperative language}
+  \label{fig:syntax}
+\end{figure}
