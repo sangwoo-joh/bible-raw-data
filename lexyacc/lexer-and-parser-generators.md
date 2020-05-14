@@ -165,3 +165,64 @@ and ...
  바인딩이 나올 수 있다. 이런 애매모호한 정규 표현식에 대해서
  ocamllex이 생성하는 오토마타는 그냥 가능한 바인딩 집합 중 하나를
  고른다. 선택된 바인딩 집합은 의도적으로 명시되지 않는다.
+
+### 2.7. Refill handlers
+
+ 기본적으로 ocamllex이 렉싱 버퍼의 끝에 도달하면 조용히 `lexbuf`의
+ `refill_buff` 함수를 호출하고 렉싱을 계속한다. 리필 액션을 조절할 수
+ 있는 일은 가끔 유용하다. 보통 비동기적 계산을 하는 라이브러리를 쓰면,
+ 블록킹 동기 연산을 피하기 위해서 지연 함수 안의 리필 액션을 덮어쓰고
+ 싶을 것이다.
+
+ OCaml 4.02부터 `refill-handler`를 지정할 수 있는데 이는 리필이 발생할
+ 때 호출될 함수이다. 이 함수는 남아있는(continuation) 렉싱에 전달되어
+ 완전히 렉싱을 조절한다. 리필 액션으로 사용되는 OCaml 표현식은 다음
+ 타입을 가져야 한다:
+
+```ocaml
+(Lexing.lexbuf -> 'a) -> Lexing.lexbuf -> 'a
+```
+
+ 첫번째 인자는 ocamllex이 보통 수행하는 (버퍼를 리필하고 나서 다시
+ 렉싱 함수를 호출하는 등의) 프로세싱을 캡쳐하는 남아있는
+ 일(continuation)이다. 결과 타입은 `'a`의 인스턴스인데 렉싱 규칙의
+ 결과 타입을 합쳐야 한다.
+
+ 예를 들어서, 다음 렉서는 임의의 모나드를 파라미터로 받는다.
+
+```ocaml
+{
+type token = EOL | INT of int | PLUS
+
+module Make (M: sig
+  type 'a t
+  val return: 'a -> 'a t
+  val bind: 'a t -> ('a -> 'b t) -> 'b t
+  val fail: string -> 'a t
+
+  (* set up lexbuf *)
+  val on_refill: Lexing.lexbuf -> unit t
+end)
+= struct
+let refill_handler k lexbuf =
+  M.bind (M.on_refill lexbuf) (fun () -> k lexbuf)
+}
+
+refill {refill_handler}
+
+rule token = parse
+| [' ' '\t']
+  { token lexbuf }
+| ['\n']
+  { M.return EOL }
+| ['0'-'9']+ as i
+  { M.return (INT (int_of_string i)) }
+| '+'
+  { M.return PLUS }
+| _
+  { M.fail "unexpected character" }
+
+{
+end
+}
+```
