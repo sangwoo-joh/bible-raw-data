@@ -189,13 +189,12 @@ let try_finalize f x finally y =
  여러 개의 이름을 가질 수 있다. 이름은 `string` 타입이다. 예를 들면
  다음 함수들은 파일 이름 레벨에서 동작한다.
 
- * `val unlink : string -> unit` : `unlink f` 는 `rm -f f`
- * `val link : string -> string -> unit` : `link f1 f2` 는 `ln f1 f2`
-   (하드 링크)
- * `val symlink : string -> string -> unit` : `symlink f1 f2` 는 `ln
-   -s f1 f2` (심볼릭 링크)
- * `val rename : string -> string -> unit` : `rename f1 f2` 는 `mv f1
-   f2`
+``` ocaml
+val unlink : string -> unit (** rm -f f *)
+val link : string -> string -> unit (** ln f1 f2 , hard link *)
+val symlink : string -> string -> unit (** ln -s f1 f2 , symbolic link *)
+val rename : string -> string -> unit (** mv f1 f2 *)
+```
 
  파일에 접근하는 두 번째 방법은 파일 디스크립터를 통한 접근이다. 한
  디스크립터는 한 파일을 가리키는 포인터를 나타내고, 추가적으로
@@ -211,9 +210,11 @@ let try_finalize f x finally y =
  프로그램이 실행되면, 세 개의 디스크립터가 할당되고 각각 `Unix` 모듈의
  `stdin`, `stdout`, `stderr` 변수에 묶인다:
 
- * `val stdin : file_descr`
- * `val stdout : file_descr`
- * `val stderr : file_descr`
+``` ocaml
+val stdin : file_descr
+val stdout : file_descr
+val stderr : file_descr
+```
 
   각각 그 프로세스의 표준입력, 표준출력, 표준오류에 해당한다.
 
