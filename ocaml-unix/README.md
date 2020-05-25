@@ -224,3 +224,16 @@ val stderr : file_descr
   디스크립터는 `cmd` 커맨드가 실행되는 동안 파일 `f`를
   가리킨다. 비슷하게, `cmd > f` 와 `cmd 2> f` 는 각각 `stdout`과
   `stderr`가 파일 `f`를 가리키도록 한다.
+
+
+### 2.3. Meta-attributes, types and permissions
+ `stat`, `lstat`, `fstat` 시스템 콜은 파일의 메타 속성을 알려준다; 즉,
+ 파일의 내용물이 아니라 파일 그 자체에 대한 정보를 뜻한다. 특히, 이
+ 정보는 파일의 신원, 타입, 접근 권한, 가장 최근에 접근한 시간과 날짜
+ 등의 정보를 포함한다.
+
+``` ocaml
+val stat : string -> stats
+val lstat : string -> stats
+val fstat : file_descr -> stats
+```
