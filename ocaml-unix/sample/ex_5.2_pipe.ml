@@ -32,9 +32,11 @@ let rec filter input =
     let fd_in, fd_out = pipe () in
     match fork () with
     | 0 ->
+        (* Parent *)
         close fd_out ;
         filter (in_channel_of_descr fd_in)
     | p ->
+        (* Child *)
         close fd_in ;
         let output = out_channel_of_descr fd_out in
         while true do
@@ -49,9 +51,11 @@ let sieve () =
   let fd_in, fd_out = pipe () in
   match fork () with
   | 0 ->
+      (* Parent *)
       close fd_out ;
       filter (in_channel_of_descr fd_in)
   | p ->
+      (* Child *)
       close fd_in ;
       generate len (out_channel_of_descr fd_out)
 
