@@ -238,3 +238,11 @@ close tmp
 ## 5. Complete example : composing N commands
 
  - [composing N commands](sample/ex_5.5_compose.ml)
+
+
+## 6. Input/output multiplexing
+
+ 이때까지 본 예제에서는 프로세스끼리 *선형적으로*
+ 커뮤니케이션했다. 즉, 각각의 프로세스는 최대 하나의 프로세스에서
+ 데이터를 읽어들였다. 여기서는 *많은* 프로세스에서 데이터를 읽을 때
+ 어떤 문제가 발생하는지와 이걸 어떻게 해결할지 고민해보자.
