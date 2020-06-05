@@ -80,3 +80,161 @@ match fork () with
  `write`를 호출 중인 프로세스에 `sigpipe` 시그널을 보내서 이 시그널의
  디폴트 핸들러가 프로세스를 죽여버린다. 만약 `sigpipe` 시그널 핸들러가
  바뀌면, `write` 호출은 `EPIPE` 에러로 종료된다.
+
+## 2. Complete example
+
+ - [parallel sieve of Eratosthenes](sample/ex_5.2_pipe.ml)
+
+## 3. Named pipes
+ System V, SunOS, Ultrix, Linux, BSD같은 유닉스 시스템에서는 파일
+ 시스템 상에서 이름을 갖는 파이프를 만들 수 있다. 이런 *이름있는
+ 파이프*는 *fifo*라고도 불리는데, 부모/자식 관계가 아니더라도
+ 프로세스끼리 커뮤니케이션을 하도록 해준다. 일반적인 파이프랑은
+ 다르다.
+
+```ocaml
+val mkfifo : string -> file_perm -> unit
+```
+
+ `mkfifo` 시스템 콜이 이름있는 파이프를 만들어준다. 첫번째 아규먼트는
+ 파이프의 이름이고, 두번째는 요청할 접근 권한이다.
+
+ 이름있는 파이프는 아무 일반 파일에 `openfile`을 호출한 것처럼
+ 열린다. 이름있는 파이프에서 읽고 쓰는 일은 일반 파일에서 읽고 쓰는
+ 일과 동일한 시맨틱을 갖는다. 읽기 전용 모드로 이름있는 파이프를 열면
+ 그 파이프가 다른 프로세스에 의해 쓰기 전용 모드로 열릴 때까지
+ 블럭된다. 쓰기 전용 모드로 열린 경우는 반대로 읽기 전용 모드로 열릴
+ 때까지 블럭된다. 이미 열려있는 경우는 블럭 안된다. `O_NONBLOCK`
+ 플래그를 줘서 블럭 없이 열 순 있지만, 이 경우 파이프에서 읽고 쓰는 일
+ 역시 블럭 안된다. 파이프가 열리고 나면, `clear_nonblock` 함수는 이
+ 플래그를 바꿔서 읽고 쓰는 일이 블럭되게 만든다. 반면, `set_nonblock`
+ 함수는 읽고 쓰는 일을 블럭 안되게 만든다.
+
+```ocaml
+val clear_nonblock : file_descr -> unit
+val set_nonblock : file_descr -> unit
+```
+
+## 4. Descriptor redirections
+ 프로세스의 표준입력과 표준출력을 파이프랑 어떻게 연결하는지 여전히
+ 모른다. 쉘에서는 `cmd1 | cmd2` 와 같이 명령어를 실행하면
+ 연결되는데. 실제로, `pipe`로 얻은 파이프 또는 이름있는 파이프에
+ `openfile`로 얻은 디스크립터는 *새로운* 디스크립터이고, `stdin`,
+ `stdout`, `stderr`과는 구분된다.
+
+ 이 문제를 다루기 위해서, 유닉스는 `dup2` 시스템 콜 ("*dup*licate a
+ descriptor *to* another descriptor" 로 읽는다) 을 제공한다. 이 함수는
+ 하나의 파일 디스크립터를 다른 디스크립터랑 같은 의미를 갖게
+ 해준다. 이게 가능한 이유는 파일 디스크립터 (`file_descr` 타입) 와
+ 실제 파일 또는 파이프를 가리키고 현재까지 읽고 쓴 위치를 기록해주는
+ 커널의 오브젝트인 *파일 테이블 엔트리* 사이에 간접적인 단계가 있는
+ 덕분이다.
+
+
+```ocaml
+val dup2 : file_descr -> file_descr -> unit
+```
+
+ `dup2 fd1 fd2` 를 통해 디스크립터 `fd2` 를 `fd1`이 가리키는 파일
+ 테이블 엔트리를 참조하도록 업데이트 할 수 있다. 이러고나면, 이 두
+ 개의 파일 디스크립터는 같은 파일 또는 파이프에 대해서 같은 읽기/쓰기
+ 위치를 참조하게 된다.
+
+
+### Standard input redirection
+
+```ocaml
+let fd = openfile "foo" [O_RDONLY] 0 in
+dup2 fd stdin;
+close fd;
+execvp "bar" [|"bar"|]
+```
+
+ 위 코드에서 `dup2`를 호출하고 나면 `stdin`가 파일 `foo`를 가리키게
+ 된다. 따라서 `stdin`에서 읽는 모든 데이터는 파일 `foo`를 읽는 것과
+ 같다. 이는 `fd`를 읽는 것도 마찬가지지만, 여기서는 더 이상 쓰지 않기
+ 때문에 `fd`를 닫았다. 이 설정은 `execvp`를 호출할 때도 유지되기
+ 때문에 `bar` 프로그램을 실행하면 표준입력이 파일 `foo`에
+ 연결된다. 이게 바로 쉘에서 `bar < foo` 명령어를 실행하면 일어나는
+ 일이다.
+
+### Standard output redirection
+
+```ocaml
+let fd = openfile "foo" [O_WRONLY; O_TRUNC; O_CREAT] 0o666 in
+dup2 fd stdout;
+close fd;
+execvp "bar" [|"bar"|]
+```
+
+ 위 코드에서는 `dup2`를 호출하고 나면 `stdout`이 파일 `foo`를 가리키게
+ 된다. 역시 `fd`도 마찬가지지만 안쓰니까 닫았다. 이 설정은 역시
+ `execvp`를 호출할 때에도 유지되기 때문에 `bar` 프로그램이 실행되면서
+ 표준출력에 출력되는 내용은 파일 `foo`에 연결되어 거기에 써진다. 이게
+ 바로 쉘에서 `bar > foo` 명령어를 실행하면 일어나는 일이다.
+
+
+### Connecting the output of a program to the input of another
+
+```ocaml
+let (fd_in, fd_out) = pipe () in
+match fork () with
+| 0 ->
+  dup2 fd_in stdin;
+  close fd_out;
+  close fd_in;
+  execvp "cmd2" [|"cmd2"|]
+| _ ->
+  dup2 fd_out stdout;
+  close fd_out;
+  close fd_in;
+  execvp "cmd1" [|"cmd1"|]
+```
+
+ 여기서는 프로그램 `cmd2`가 실행될 때 표준입력이 파이프의
+ 출력(`fd_in`)과 연결되었다. 병렬적으로, 프로그램 `cmd1`이 실행될 때는
+ 표준출력이 파이프의 입력(`fd_out`)과 연결되었다. 따라서 `cmd1`이
+ 표준출력에 뭘 출력하던 간에 `cmd2` 가 표준입력에서 이를 읽게
+ 된다. (`cmd1` -> `cmd2`)
+
+ 여기서 `cmd2`가 끝나기 전에 `cmd1`이 끝나면 어떻게 될까? `cmd1`이
+ 끝날 때, 그 프로세스가 열어둔 모든 디스크립터는 닫힌다. 이 말은
+ 파이프의 입력에 대해서 열린 디스크립터가 모두 닫힌다는
+ 뜻이다. `cmd2`가 파이프에서 기다리고 있는 모든 데이터를 읽었을 때, 그
+ 다음 읽기는 파일의 끝을 리턴할 것이다; 그러고나면 `cmd2`는 표준입력의
+ 끝에 도달했을 때 해야 할 일을 하게 된다. 예를 들면, 종료한다.
+
+ 이번엔 반대로 `cmd1`이 끝나기 전에 `cmd2`가 끝나는 경우를
+ 생각해보자. 이때는 파이프의 출력에 대한 마지막 디스크립터가 닫히게
+ 되고, 표준출력에 쓸려고 할 때 `cmd1`은 시그널 (프로세스를 죽이는) 을
+ 받게 된다.
+
+
+ 디스크립터를 서로 바꾸는 일은 주의를 요한다. 순진하게 `dup2 fd1 fd2;
+ dup2 fd2 fd1`은 당연히 동작안한다. 이 경우 두번째 리다이렉션은 아무런
+ 효과가 없는데, 첫번째에서 `fd1`과 `fd2`가 이미 같은 파일 테이블
+ 엔트리를 가리키기 때문이다. 이로 인해 `fd2`가 가리키던 값은
+ 잃어버린다. 두 값을 서로 바꿀때는 당연히 중간에 임시 변수가
+ 필요하다.
+
+```ocaml
+val dup : file_descr -> file_descr
+```
+
+ `dup fd`를 호출하면 `fd`와 같은 파일 테이블 엔트리를 가리키는 새로운
+ 디스크립터를 돌려준다. 이걸가지고 다음처럼 `stdout`과 `stderr`을
+ 스왑할 수 있다.
+
+```ocaml
+let tmp = dup stdout in
+dup2 stderr stdout;
+dup2 tmp stderr;
+close tmp
+```
+
+ 여기서 마지막에 다 쓰고 난 임시 디스크립터를 닫는 것을 잊지말자!
+
+
+## 5. Complete example : composing N commands
+
+ - [composing N commands](sample/ex_5.5_compose.ml)
