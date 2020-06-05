@@ -45,16 +45,16 @@ let rec filter input =
     let fd_in, fd_out = pipe () in
     match fork () with
     | 0 ->
-        (* Parent *)
-        (* reads numbers on its input,
-           and writes each one to the pipe,
-           if it is not a multiple of one of the 1000 primes it initially read. *)
+        (* Child *)
+        (* starts to filter the output of the pipe *)
         close fd_out ;
         filter (in_channel_of_descr fd_in)
     (* it is possible but very risky to create more than one in_channel on the same descriptor. *)
     | p ->
-        (* Child *)
-        (* starts to filter the output of the pipe *)
+        (* Parent *)
+        (* reads numbers on its input,
+           and writes each one to the pipe,
+           if it is not a multiple of one of the 1000 primes it initially read. *)
         close fd_in ;
         let output = out_channel_of_descr fd_out in
         while true do
@@ -69,6 +69,16 @@ let sieve () =
   let fd_in, fd_out = pipe () in
   match fork () with
   | 0 ->
+      (* Child *)
+      (* If argv is not given, all processes continue indefinitely until
+       one or more are killed. The death of a process results in the
+       death of its child as described above. It also close the output
+       of the pipe connected to its parent. This will in turn kill the
+       parent at the next write on the pipe. The parent will receive a
+       sigpipe signal whose default handler terminates the process. *)
+      close fd_out ;
+      filter (in_channel_of_descr fd_in)
+  | p ->
       (* Parent *)
       (* Generators.  When argv is given, parent will terminate first,
        and close the descriptor on the input of the pipe connected to
@@ -78,16 +88,6 @@ let sieve () =
        also stops. Thus, in this program, children become orphaned and
        are temporarily attached to the process init before they die in
        turn.  *)
-      close fd_out ;
-      filter (in_channel_of_descr fd_in)
-  | p ->
-      (* Child *)
-      (* If argv is not given, all processes continue indefinitely until
-       one or more are killed. The death of a process results in the
-       death of its child as described above. It also close the output
-       of the pipe connected to its parent. This will in turn kill the
-       parent at the next write on the pipe. The parent will receive a
-       sigpipe signal whose default handler terminates the process. *)
       close fd_in ;
       generate len (out_channel_of_descr fd_out)
 
