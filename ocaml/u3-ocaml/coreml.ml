@@ -2,7 +2,10 @@
 
 type name = Name of string | Int of int
 
-type constant = {name: name; constr: bool; arity: int}
+type constant =
+  { name: name  (** ?? *)
+  ; constr: bool  (** true -> constructor, false -> primitive *)
+  ; arity: int  (** number of arguments *) }
 
 type var = string
 
@@ -13,11 +16,53 @@ type expr =
   | App of expr * expr
   | Let of var * expr * expr
 
+(** primitive of arity 2 *)
 let plus = Const {name= Name "+"; arity= 2; constr= false}
 
+(** primitive of arity 2 *)
 let times = Const {name= Name "*"; arity= 2; constr= false}
 
+(** constructor of arity 0 *)
 let int n = Const {name= Int n; arity= 0; constr= true}
+
+(** sample *)
+let sample_expr =
+  let plus_x n = App (App (plus, Var "x"), n) in
+  App
+    ( Fun ("x", App (App (times, plus_x (int 1)), plus_x (int (-1))))
+    , App (Fun ("x", App (App (plus, Var "x"), int 1)), int 2) )
+
+let hole = Const {name= Name "[]"; arity= 0; constr= true}
+
+let rec expr_with expr_in_hole k out =
+  let expr = expr_with expr_in_hole in
+  let string x = Format.fprintf out x in
+  let paren p f =
+    if k > p then string "(" ;
+    f () ;
+    if k > p then string ")"
+  in
+  function
+  | Var x ->
+      string "%s" x
+  | Const _ as c when c = hole ->
+      string "[%a]" (expr_with hole 0) expr_in_hole
+  | Const {name= Int n} ->
+      string "%d" n
+  | Const {name= Name c} ->
+      string "%s" c
+  | Fun (x, a) ->
+      paren 0 (fun () -> string "\\\ %s . %a" x (expr 0) a)
+  | App (App (Const {name= Name (("+" | "*") as n)}, a1), a2) ->
+      paren 1 (fun () -> string "%a %s %a" (expr 2) a1 n (expr 2) a2)
+  | App (a1, a2) ->
+      paren 1 (fun () -> string "%a %a" (expr 1) a1 (expr 2) a2)
+  | Let (x, a1, a2) ->
+      paren 0 (fun () -> string "let x = %a in %a" (expr 0) a1 (expr 0) a2)
+
+let print_expr e = expr_with hole 0 Format.std_formatter e
+
+(** evaluation *)
 
 let rec evaluated = function Fun _ -> true | u -> partial_application 0 u
 
