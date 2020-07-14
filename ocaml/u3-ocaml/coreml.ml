@@ -52,7 +52,7 @@ let rec expr_with expr_in_hole k out =
   | Const {name= Name c} ->
       string "%s" c
   | Fun (x, a) ->
-      paren 0 (fun () -> string "\\\ %s . %a" x (expr 0) a)
+      paren 0 (fun () -> string "\\ %s . %a" x (expr 0) a)
   | App (App (Const {name= Name (("+" | "*") as n)}, a1), a2) ->
       paren 1 (fun () -> string "%a %s %a" (expr 2) a1 n (expr 2) a2)
   | App (a1, a2) ->
@@ -64,6 +64,7 @@ let print_expr e = expr_with hole 0 Format.std_formatter e
 
 (** evaluation *)
 
+(** Check whether an expression is evaluated (constants) or not. *)
 let rec evaluated = function Fun _ -> true | u -> partial_application 0 u
 
 and partial_application n = function
