@@ -25,6 +25,27 @@
    한다. 즉, 한 문장형태에서 reduce 되는 부분을 핸들이라고 한다.
 
 
+### conflicts
+
+#### shift/reduce conflict
+ - 어떤 상태(스택, 입력)에서 그 다음으로 shift를 해야할지 reduce를
+   해야할지 모호한 경우
+
+```
+E -> A B C
+   | D C
+
+D -> A B
+```
+
+#### reduce/reduce conflict
+ - 어떤 상태에서 어떤 문법으로 reduce를 해야할지 모호한 경우
+
+```
+E -> A + B
+   | B + C
+```
+
 ### 예시
 
 ```
