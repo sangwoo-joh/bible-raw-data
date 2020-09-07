@@ -1,6 +1,7 @@
 # Neural Networks and Deep Learning
  - ReLu: Rectified Linear Unit
  - For sequence data -> RNN (one-dimensional sequence data, temporal)
+ - `m` denotes the number of training examples (data)
 
 ## Scale drives deep learning progress
  - Large amount of data
