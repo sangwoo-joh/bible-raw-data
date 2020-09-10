@@ -1,5 +1,12 @@
 # Transformer
 
+## Key Advantages
+ - Easier to train, more efficient
+ - Transfer Learning works!
+   - Pre-trained models can be fine-tuned for new tasks
+ - Can be trained on unsupervised text
+   - All the world's text data is now valid training data
+
 ## Why ReLu works better?
  - Hinton: Allows neuron to express a strong opinion
  - Gradient doesn't saturate (on the high end)
