@@ -22,3 +22,7 @@
    - Sometimes RMSProp works best
    - SWA can easily improve quality
    - AdaTune (https://github.com/awslabs/adatune)
+
+## MagetronLM
+ - Massive Transformer Language Model from NVIDIA
+ - 8.3B parameters trained on 512 GPU for 9 days ($450k on EC2)
