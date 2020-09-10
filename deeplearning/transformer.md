@@ -26,3 +26,4 @@
 ## MagetronLM (https://github.com/NVIDIA/Megatron-LM)
  - Massive Transformer Language Model from NVIDIA
  - 8.3B parameters trained on 512 GPU for 9 days ($450k on EC2)
+ - **Re-usable**, **fine-tunable**
