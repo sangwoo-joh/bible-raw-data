@@ -1,5 +1,28 @@
 # Transformer
 
+## Attention
+ - Q: Query (output token)
+ - K: Key (input token)
+ - Relevance = Q * K
+   - Relevance sroces are interpretable!
+ - V: Value (input token)
+ - Out = Softmax(relevance) * V
+
+### Pseudo-code
+ - https://gist.github.com/leopd/29786dd4a2a8ba801324b77fee7f4348
+
+### Multi-headed Attention
+ - 8 times
+ - Lets network learn 8 different semantic meanings of attention
+   - e.g. One for grammar, one for vocab, one for conjugation, ...
+
+## Positional Encoding
+ - Attention is "bag of words"
+ - Input layer: add a word embedding and a position embedding
+ - Position can be either learned or fixed
+ - Fixed allows extrapolating to longer sequences
+
+
 ## Key Advantages
  - Easier to train, more efficient
  - Transfer Learning works!
